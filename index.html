@@ -1,0 +1,1734 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Muhammad Arfat — Backend &amp; secure systems</title>
+<meta name="description" content="Backend engineer building APIs, infrastructure, and security tooling. Based in Islamabad, Pakistan.">
+<meta name="author" content="Muhammad Arfat">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Muhammad Arfat — Backend &amp; secure systems">
+<meta property="og:description" content="Backend engineer building APIs, infrastructure, and security tooling.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://arfat.me">
+<meta property="og:image" content="https://arfat.me/og.png">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Muhammad Arfat — Backend &amp; secure systems">
+<meta name="twitter:description" content="Backend engineer building APIs, infrastructure, and security tooling.">
+<meta name="twitter:image" content="https://arfat.me/og.png">
+
+<!-- Canonical -->
+<link rel="canonical" href="https://arfat.me">
+
+<!-- Favicon -->
+<link rel="icon" href="media/ico/favicon.ico" sizes="any">
+<meta name="theme-color" content="#ffffff">
+
+<!-- Fonts: self-hosted, zero external requests -->
+<style>
+@font-face { font-family:'Space Mono'; font-style:normal; font-weight:400; font-display:swap; src:url(media/fonts/spacemono-400.woff2) format('woff2'); }
+@font-face { font-family:'Space Mono'; font-style:normal; font-weight:700; font-display:swap; src:url(media/fonts/spacemono-700.woff2) format('woff2'); }
+@font-face { font-family:'Spectral'; font-style:normal; font-weight:400; font-display:swap; src:url(media/fonts/spectral-400.woff2) format('woff2'); }
+@font-face { font-family:'Spectral'; font-style:normal; font-weight:500; font-display:swap; src:url(media/fonts/spectral-500.woff2) format('woff2'); }
+@font-face { font-family:'Spectral'; font-style:normal; font-weight:600; font-display:swap; src:url(media/fonts/spectral-600.woff2) format('woff2'); }
+@font-face { font-family:'Spectral'; font-style:italic; font-weight:400; font-display:swap; src:url(media/fonts/spectral-400i.woff2) format('woff2'); }
+</style>
+
+<!-- Structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Muhammad Arfat",
+  "url": "https://arfat.me",
+  "jobTitle": "Backend Engineer",
+  "description": "Backend engineer building APIs, infrastructure, and security tooling.",
+  "address": { "@type": "PostalAddress", "addressLocality": "Islamabad", "addressCountry": "PK" },
+  "sameAs": ["https://github.com/arfatkh", "https://linkedin.com/in/arfatkh"]
+}
+</script>
+
+<style>
+/* ── Tokens ──────────────────────────────────────────────────────────────── */
+:root {
+  --bg:     #ffffff;
+  --text:   #0c0c0c;
+  --muted:  #5f5f5f;
+  --rule:   #e8e8e8;
+  --accent: #1a3770;
+  --body:   "Spectral", Georgia, serif;
+  --ui:     "Space Mono", ui-monospace, monospace;
+  --mono:   "Space Mono", ui-monospace, monospace;
+}
+
+/* ── Reset ───────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html, body { margin: 0; padding: 0; }
+img { max-width: 100%; height: auto; display: block; }
+pre { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  background-image: radial-gradient(circle, #1a377014 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+main { flex: 1; }
+h1, h2, h3 { margin: 0; }
+p { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+a:hover { opacity: .8; }
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+::selection { background: var(--accent); color: #fff; }
+
+/* ── Palestine bar ───────────────────────────────────────────────────────── */
+.pal-bar {
+  background: #000;
+  color: #fff;
+  font-family: var(--ui);
+  font-size: 11px;
+  letter-spacing: .04em;
+  text-align: center;
+  padding: 7px 16px;
+}
+.pal-bar span { margin: 0 6px; }
+
+/* ── Dark tag (reusable) ─────────────────────────────────────────────────── */
+.dark-tag {
+  display: inline-block;
+  background: #000;
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .04em;
+  padding: 2px 8px;
+  border-radius: 3px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* ── Nav ─────────────────────────────────────────────────────────────────── */
+.nav-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255,255,255,.85);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+  border-bottom: 1px solid transparent;
+  transition: border-color .2s;
+}
+.nav-wrapper.scrolled { border-bottom-color: var(--rule); }
+.site-nav {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.wordmark {
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: .04em;
+}
+.nav-links {
+  display: flex;
+  gap: 18px;
+  font-family: var(--ui);
+  font-size: 13px;
+}
+.nav-links a {
+  color: var(--text);
+  border-bottom: 1.5px solid transparent;
+  padding-bottom: 2px;
+}
+
+/* ── CSS routing via :target + :has() ────────────────────────────────────── */
+/* Default: show home, others hidden */
+.page { display: none; }
+#home  { display: block; }
+
+/* Show targeted page */
+.page:target { display: block; }
+
+/* ── Page transitions ────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+#home        { animation: fadeUp .4s ease both; }
+.page:target { animation: fadeUp .4s ease both; }
+@media (prefers-reduced-motion: reduce) {
+  #home, .page:target { animation: none; }
+}
+
+/* Hide home when another page is targeted */
+@supports selector(:has(*)) {
+  body:has(#writing:target)          #home,
+  body:has(#writing-intrasec:target) #home,
+  body:has(#work:target)             #home,
+  body:has(#about:target)            #home,
+  body:has(#now:target)              #home,
+  body:has(#space:target)            #home,
+  body:has(#uses:target)             #home,
+  body:has(#resources:target)        #home { display: none; }
+  body:has(#project-intrasec:target) #home { display: none; }
+  body:has(#cv:target)               #home { display: none; }
+
+  /* Active nav states */
+  body:not(:has(.page:target)) .nav-links a[href="#home"] {
+    color: var(--accent); border-bottom-color: var(--accent);
+  }
+  body:has(#writing:target)          .nav-links a[href="#writing"],
+  body:has(#writing-intrasec:target) .nav-links a[href="#writing"] {
+    color: var(--accent); border-bottom-color: var(--accent);
+  }
+  body:has(#work:target)             .nav-links a[href="#work"]  { color: var(--accent); border-bottom-color: var(--accent); }
+  body:has(#about:target)            .nav-links a[href="#about"] { color: var(--accent); border-bottom-color: var(--accent); }
+}
+
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 28px 100px;
+}
+
+/* ── Shared components ───────────────────────────────────────────────────── */
+.a-accent {
+  color: var(--accent);
+  border-bottom: 1px solid #1a377044;
+}
+.section-block { margin-top: 44px; }
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  gap: 12px;
+}
+.section-label {
+  font-family: var(--ui);
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+.section-label::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 1px;
+  background: var(--rule);
+}
+.page-header { padding-top: 56px; padding-bottom: 24px; }
+.eyebrow {
+  font-family: var(--ui);
+  font-size: 11.5px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.page-title {
+  font-family: var(--body);
+  font-size: clamp(28px, 4vw, 38px);
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  max-width: 26ch;
+  border-left: 3px solid var(--accent);
+  padding-left: 20px;
+  margin-left: -23px;
+}
+.page-sub {
+  font-family: var(--body);
+  font-size: 17px;
+  color: var(--muted);
+  margin-top: 12px;
+  max-width: 44ch;
+  line-height: 1.55;
+}
+.body-p {
+  font-family: var(--body);
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text);
+}
+.body-p + .body-p { margin-top: 24px; }
+
+/* ── Home ────────────────────────────────────────────────────────────────── */
+.home-header { padding-top: 72px; padding-bottom: 0; position: relative; }
+.sigil { position: absolute; top: 68px; right: 0; opacity: .65; cursor: pointer; }
+.sigil:hover { opacity: .9; }
+.si-st { stroke: var(--text); fill: none; }
+.si-ft { fill: var(--text); stroke: none; }
+.si-sa { stroke: var(--accent); fill: none; }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-7px); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sigil { animation: float 4s ease-in-out infinite; }
+}
+.home-h1 {
+  font-family: var(--body);
+  font-size: clamp(32px, 4.5vw, 46px);
+  line-height: 1.25;
+  font-weight: 400;
+  letter-spacing: -0.012em;
+  max-width: 22ch;
+  margin: 0;
+  color: var(--text);
+  border-left: 3px solid var(--accent);
+  padding-left: 20px;
+  margin-left: -23px;
+}
+.home-prose { margin-top: 18px; max-width: 50ch; }
+.home-status { margin-top: 20px; font-family: var(--mono); font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.home-prose p { font-family: var(--body); font-size: 17px; line-height: 1.7; color: var(--text); }
+.home-prose p + p { margin-top: 12px; }
+.home-rule { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+.home-post {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  padding: 9px 0;
+  color: var(--text);
+}
+.home-post:hover { opacity: .7; }
+.home-post-title { font-family: var(--body); font-size: 17px; line-height: 1.35; }
+.home-post-date  { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+.home-more { margin-top: 10px; font-family: var(--ui); font-size: 14px; }
+.home-contact { font-family: var(--body); font-size: 17px; color: var(--muted); line-height: 1.8; }
+.home-contact a { color: var(--accent); border-bottom: 1px solid #1a377033; }
+
+/* ── Post list ───────────────────────────────────────────────────────────── */
+ul[role="list"] { counter-reset: posts; }
+.post-item { counter-increment: posts; }
+.post-title::before {
+  content: counter(posts, decimal-leading-zero) ". ";
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  margin-right: 2px;
+}
+.post-item {
+  padding: 14px 10px;
+  margin: 0 -10px;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 4px;
+  transition: background .15s;
+}
+.post-item:hover { background: #f0f3fa; }
+.post-item a { display: block; color: var(--text); }
+.post-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: baseline;
+}
+.post-title { font-family: var(--body); font-size: 18px; font-weight: 500; line-height: 1.35; }
+.post-date  { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+.post-excerpt { font-family: var(--body); font-size: 16px; line-height: 1.6; color: var(--muted); margin-top: 6px; }
+
+/* ── Featured work (home summary) ───────────────────────────────────────── */
+.work-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 18px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: baseline;
+}
+.work-name  { font-family: var(--body); font-size: 18px; font-weight: 500; }
+.work-blurb { color: var(--muted); font-size: 15px; font-weight: 400; }
+.work-role  { font-family: var(--ui); font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+/* ── Elsewhere ───────────────────────────────────────────────────────────── */
+.elsewhere-list { font-family: var(--body); font-size: 17px; line-height: 1.85; }
+.ps { font-family: var(--ui); font-size: 12px; color: var(--muted); margin-top: 56px; font-style: italic; }
+
+/* ── Project cards ───────────────────────────────────────────────────────── */
+.project-card {
+  padding: 12px 10px;
+  margin: 0 -10px;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 4px;
+  transition: background .15s;
+}
+.project-card:hover { background: #f0f3fa; }
+
+/* Featured cards — first section-block on work page */
+#work .section-block:first-of-type .project-card {
+  padding: 18px 10px 18px 14px;
+  margin-left: -16px;
+  border-left: 2px solid var(--accent);
+  border-radius: 0 4px 4px 0;
+}
+#work .section-block:first-of-type .project-name {
+  font-size: 21px;
+}
+.project-name a, .proj-ext-link { border-bottom: 1px solid var(--rule); }
+.project-name a:hover, .proj-ext-link:hover { opacity: 1; border-bottom-color: var(--accent); }
+.project-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.project-name { font-family: var(--body); font-size: 19px; font-weight: 500; color: var(--accent); }
+.project-role { font-family: var(--ui); font-size: 12px; color: var(--muted); }
+.project-blurb { font-family: var(--body); font-size: 16px; line-height: 1.6; opacity: .85; }
+.stack-list { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.stack-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  background: #eaeff8;
+  padding: 2px 8px;
+  border: 1px solid #c4d0e8;
+  border-radius: 3px;
+  line-height: 1.5;
+}
+
+/* ── Post article ────────────────────────────────────────────────────────── */
+.post-article { padding-top: 56px; }
+.post-meta { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.post-h1 {
+  font-family: var(--body);
+  font-size: clamp(28px, 4vw, 38px);
+  line-height: 1.18;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  margin-bottom: 28px;
+}
+.prose p { font-family: var(--body); font-size: 18px; line-height: 1.6; }
+.prose p + p { margin-top: 16px; }
+.prose h2 { font-family: var(--body); font-size: 19px; font-weight: 600; margin: 40px 0 12px; color: var(--text); border-left: 2px solid var(--accent); padding-left: 14px; margin-left: -16px; padding-top: 3px; padding-bottom: 2px; }
+.prose-footer { border-top: 1px solid var(--rule); margin-top: 48px; padding-top: 20px; font-family: var(--ui); font-size: 13px; color: var(--muted); }
+code {
+  font-family: var(--mono);
+  font-size: .87em;
+  background: #edf0f7;
+  color: var(--accent);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid #d0d9ea;
+}
+.writing-note { font-family: var(--body); font-size: 14px; color: var(--muted); margin-top: 32px; font-style: italic; }
+
+/* ── Project pages ───────────────────────────────────────────────────────── */
+.project-page-header { padding-top: 56px; padding-bottom: 32px; border-bottom: 1px solid var(--rule); }
+.project-page-header .eyebrow a { color: var(--muted); border-bottom: 1px solid #1a377022; }
+.project-hero { font-family: var(--body); font-size: clamp(26px, 3.5vw, 34px); font-weight: 400; line-height: 1.3; letter-spacing: -0.01em; max-width: 28ch; margin: 12px 0 0; border-left: 3px solid var(--accent); padding-left: 20px; margin-left: -23px; }
+.project-meta-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 28px;
+  margin-top: 24px;
+  font-family: var(--ui); font-size: 12px; color: var(--muted);
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+.project-meta-row span { display: flex; flex-direction: column; gap: 4px; }
+.project-meta-row strong { color: var(--text); font-weight: 700; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.project-section { margin-top: 48px; }
+.project-section-label { font-family: var(--ui); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 14px; }
+.project-screenshot {
+  width: 100%; border-radius: 6px; border: 1px solid var(--rule);
+  background: var(--bg); display: block; margin: 20px 0;
+  aspect-ratio: 16/9; object-fit: cover;
+}
+.project-screenshot.diagram {
+  aspect-ratio: auto; object-fit: contain; background: #fafbff;
+}
+.screenshot-placeholder {
+  width: 100%; aspect-ratio: 16/9; border-radius: 6px;
+  border: 1px dashed #ccc; background: #fafafa;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ui); font-size: 12px; color: #bbb;
+  margin: 20px 0;
+}
+.project-codeblock {
+  background: #1e1e1e;
+  border-radius: 8px;
+  border: 1px solid #333;
+  margin: 20px 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.project-codeblock pre {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.7;
+  color: #d4d4d4;
+  padding: 22px 24px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  tab-size: 2;
+  min-width: 0;
+}
+.project-links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.project-link-btn {
+  font-family: var(--ui); font-size: 12px;
+  padding: 7px 14px; border-radius: 4px;
+  border: 1px solid var(--rule); color: var(--text);
+}
+.project-link-btn:hover { background: var(--rule); opacity: 1; }
+.project-link-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* ── Uses page ───────────────────────────────────────────────────────────── */
+.uses-grid { display: grid; gap: 0; }
+.uses-item { padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.uses-item:last-child { border-bottom: 0; }
+.uses-name { font-family: var(--body); font-size: 17px; font-weight: 500; margin-bottom: 3px; }
+.uses-desc { font-family: var(--body); font-size: 15px; color: var(--muted); line-height: 1.5; }
+
+/* ── Resources page ──────────────────────────────────────────────────────── */
+.res-list { display: grid; gap: 0; }
+.res-item {
+  display: grid; grid-template-columns: 1fr;
+  gap: 3px; padding: 13px 10px; margin: 0 -10px;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 4px; transition: background .15s;
+  color: var(--text);
+}
+.res-item:hover { background: #f0f3fa; opacity: 1; }
+.res-item:last-child { border-bottom: 0; }
+.res-name { font-family: var(--body); font-size: 17px; font-weight: 500; color: var(--accent); }
+.res-desc { font-family: var(--body); font-size: 15px; color: var(--muted); line-height: 1.5; }
+
+/* ── About page ──────────────────────────────────────────────────────────── */
+.about-callout {
+  margin: 32px 0;
+  padding: 4px 0 4px 18px;
+  border-left: 2px solid var(--accent);
+  font-family: var(--body);
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--text);
+  font-style: italic;
+}
+.about-cta {
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--body);
+  font-size: 17px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.about-cta a { display: inline-block; margin-top: 8px; font-size: 18px; }
+
+/* ── Now page ────────────────────────────────────────────────────────────── */
+.now-meta { font-family: var(--mono); font-size: 13px; color: var(--muted); margin-top: -8px; }
+.now-block { margin-top: 28px; }
+.now-label { font-family: var(--ui); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 8px; }
+.now-list { font-family: var(--body); font-size: 17px; line-height: 1.65; }
+.now-list li { padding-left: 18px; position: relative; margin-bottom: 4px; }
+.now-list li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0.6em;
+  width: 8px; height: 1px;
+  background: var(--muted);
+}
+
+/* ── Keyboard shortcut tooltip ───────────────────────────────────────────── */
+#kb-tip {
+  position: fixed; bottom: 24px; right: 24px; z-index: 500;
+  background: var(--text); color: var(--bg);
+  font-family: var(--mono); font-size: 11px; letter-spacing: .02em;
+  padding: 9px 14px; border-radius: 6px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .15s ease;
+}
+#kb-tip.visible { opacity: 1; }
+#kb-tip b { color: var(--bg); opacity: .5; }
+
+/* ── Screenshot grid ────────────────────────────────────────────────────── */
+.ss-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 20px 0;
+}
+.ss-grid img {
+  width: 100%; border-radius: 6px;
+  border: 1px solid var(--rule);
+  display: block;
+}
+.ss-grid figcaption, .ss-caption {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 5px;
+  text-align: center;
+}
+@media (max-width: 520px) {
+  .ss-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Space page ──────────────────────────────────────────────────────────── */
+.space-screenshot {
+  display: block; width: 100%; max-width: 560px;
+  border-radius: 8px; border: 1px solid var(--rule);
+  box-shadow: 0 4px 24px rgba(0,0,0,.08);
+  margin: 28px 0;
+}
+.back-link { margin-top: 32px; font-family: var(--ui); font-size: 13px; }
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.site-footer {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 28px 56px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--ui);
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-left { display: flex; flex-direction: column; gap: 8px; }
+.footer-secondary { display: flex; gap: 12px; flex-wrap: wrap; }
+.footer-secondary a { color: var(--muted); }
+.footer-links { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.footer-links a { color: var(--muted); }
+
+/* ── Reading progress bar ────────────────────────────────────────────────── */
+#reading-progress {
+  position: fixed; top: 0; left: 0; height: 2px;
+  background: var(--accent); width: 0;
+  z-index: 200; transition: width .08s linear;
+  pointer-events: none;
+}
+
+/* ── Table of contents (inline) ─────────────────────────────────────────── */
+/* Widen main when post TOC sidebar is visible */
+body:has(#writing-intrasec:target) main { max-width: 1080px; }
+
+.post-layout {
+  display: grid;
+  grid-template-columns: 196px 1fr;
+  gap: 0 48px;
+  align-items: start;
+}
+.toc-sidebar {
+  position: sticky;
+  top: 72px;
+  padding-top: 56px;
+}
+.toc-sidebar-label {
+  font-family: var(--ui); font-size: 11px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 10px;
+}
+.toc-sidebar a {
+  display: block;
+  font-family: var(--ui); font-size: 13px;
+  color: var(--muted); text-decoration: none;
+  padding: 5px 0 5px 12px;
+  border-left: 2px solid var(--rule);
+  line-height: 1.35;
+  transition: color .15s, border-color .15s;
+}
+.toc-sidebar a + a { margin-top: 2px; }
+.toc-sidebar a:hover { color: var(--text); }
+.toc-sidebar a.toc-active { color: var(--text); border-left-color: var(--accent); }
+
+@media (max-width: 720px) {
+  body:has(#writing-intrasec:target) main { max-width: 760px; }
+  .post-layout { display: block; }
+  .toc-sidebar {
+    position: static;
+    padding-top: 40px;
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .toc-sidebar-label { margin-bottom: 6px; }
+  .toc-sidebar a {
+    display: block;
+    border-left: none;
+    padding: 4px 0;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .toc-sidebar a.toc-active { color: var(--accent); }
+}
+
+/* ── Home secondary pages ────────────────────────────────────────────────── */
+.home-pages {
+  display: flex;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.home-page-item {
+  flex: 1;
+  padding: 11px 14px;
+  border-right: 1px solid var(--rule);
+  background: #fff;
+  color: var(--text);
+  transition: background .15s;
+}
+.home-page-item:last-child { border-right: 0; }
+.home-page-item:hover { background: #f0f3fa; opacity: 1; }
+.home-page-name { font-family: var(--ui); font-size: 12px; font-weight: 700; color: var(--accent); }
+.home-page-desc { display: none; }
+@media (max-width: 520px) {
+  .home-pages { flex-wrap: wrap; }
+  .home-page-item { flex: 0 0 50%; border-bottom: 1px solid var(--rule); }
+  .home-page-item:nth-child(even) { border-right: 0; }
+  .home-page-item:nth-last-child(-n+2) { border-bottom: 0; }
+}
+
+/* ── Eyebrow / section label contrast ───────────────────────────────────── */
+.eyebrow, .section-label, .project-section-label, .now-label {
+  color: #888;
+}
+
+/* ── Scroll fix: pages start at top ─────────────────────────────────────── */
+.page { scroll-margin-top: 0; }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 520px) {
+  .site-nav, main, .site-footer { padding-left: 20px; padding-right: 20px; }
+  .home-sub { font-size: 17px; }
+  .work-row { grid-template-columns: 1fr; gap: 4px; }
+  .post-row  { grid-template-columns: 1fr; gap: 4px; }
+  .sigil { display: none; }
+  .home-h1, .page-title, .project-hero { margin-left: -17px; padding-left: 14px; }
+
+  /* Mobile nav — wrap cleanly */
+  .site-nav { padding: 14px 20px; gap: 10px; }
+  .nav-links { gap: 14px; font-size: 12px; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .wordmark { font-size: 11px; }
+
+  /* Project page mobile */
+  .project-meta-row { grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+  .project-links { flex-direction: column; }
+  .project-link-btn { text-align: center; }
+
+  /* Footer mobile */
+  .site-footer { flex-direction: column; align-items: center; text-align: center; gap: 14px; padding: 24px 20px 36px; }
+  .footer-left { align-items: center; }
+  .footer-links { flex-wrap: wrap; justify-content: center; }
+  .footer-secondary { justify-content: center; }
+}
+
+/* ── CV page ─────────────────────────────────────────────────────────────── */
+.cv-header { padding-top: 56px; padding-bottom: 28px; border-bottom: 1px solid var(--rule); }
+.cv-name { font-family: var(--body); font-size: clamp(26px, 4vw, 36px); font-weight: 500; letter-spacing: -0.01em; margin: 0 0 10px; }
+.cv-contacts { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--ui); font-size: 12px; color: var(--muted); align-items: center; }
+.cv-contacts a { color: var(--muted); border-bottom: 1px solid transparent; }
+.cv-contacts a:hover { border-bottom-color: var(--muted); opacity: 1; }
+.cv-dl { margin-top: 16px; }
+.cv-dl a {
+  display: inline-block; font-family: var(--ui); font-size: 12px;
+  padding: 6px 14px; border: 1px solid var(--accent); border-radius: 4px;
+  color: var(--accent);
+}
+.cv-dl a:hover { background: #eaeff8; opacity: 1; }
+.cv-section { margin-top: 40px; }
+.cv-section-title {
+  font-family: var(--ui); font-size: 11px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--text);
+  margin-bottom: 16px;
+  border-left: 2px solid var(--accent); padding-left: 10px;
+}
+.cv-entry { padding: 14px 0; border-bottom: 1px solid var(--rule); }
+.cv-entry:last-child { border-bottom: 0; }
+.cv-entry-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.cv-org { font-family: var(--body); font-size: 17px; font-weight: 500; }
+.cv-date { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+.cv-role { font-family: var(--body); font-size: 15px; color: var(--muted); font-style: italic; margin: 3px 0 8px; }
+.cv-bullets { margin: 0; padding: 0 0 0 18px; list-style: disc; }
+.cv-bullets li { font-family: var(--body); font-size: 15px; line-height: 1.6; color: var(--text); margin-bottom: 3px; }
+.cv-skills-grid { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; font-family: var(--body); font-size: 15px; line-height: 1.6; }
+.cv-skill-label { font-family: var(--ui); font-size: 11px; color: #888; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; white-space: nowrap; }
+@media print {
+  .pal-bar, .nav-wrapper, .cv-dl, .site-footer { display: none !important; }
+  main { padding: 0 !important; }
+  .cv-header { padding-top: 0; }
+  body { font-size: 13px; }
+}
+
+/* ── Lightbox ───────────────────────────────────────────────────────────── */
+#lb-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.88);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; cursor: zoom-out;
+  animation: lb-in .15s ease;
+}
+#lb-overlay img {
+  max-width: 92vw; max-height: 92vh;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.6);
+}
+@keyframes lb-in { from { opacity: 0; } to { opacity: 1; } }
+img.project-screenshot, .ss-grid img { cursor: zoom-in; }
+</style>
+</head>
+<body>
+
+<div class="pal-bar"><a href="https://www.aljazeera.com/tag/israel-palestine-conflict/" target="_blank" rel="noopener noreferrer" style="color:#fff;border-bottom:1px solid rgba(255,255,255,.3)">🇵🇸<span>free palestine</span>🍉</a></div>
+<div class="nav-wrapper" id="nav-wrapper">
+<nav class="site-nav" aria-label="Main navigation">
+  <a href="#home" class="wordmark">arfat.me</a>
+  <ul class="nav-links" role="list">
+    <li><a href="#home">home</a></li>
+    <li><a href="#writing">writing</a></li>
+    <li><a href="#work">work</a></li>
+    <li><a href="#about">about</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav-wrapper').classList.toggle('scrolled', window.scrollY > 8);
+  }, { passive: true });
+
+  function _onHash() {
+    if (location.hash) {
+      const t = document.querySelector(location.hash);
+      if (t && t.classList.contains('page')) window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+    buildTOC(); updateProgress();
+  }
+  window.addEventListener('hashchange', _onHash);
+  document.addEventListener('DOMContentLoaded', _onHash);
+
+  // Reading progress bar
+  const _prog = Object.assign(document.createElement('div'), { id: 'reading-progress' });
+  document.body.appendChild(_prog);
+  function updateProgress() {
+    const art = document.querySelector('.page:target .post-article, .page:target .post-article');
+    if (!art) { _prog.style.width = '0'; return; }
+    const h = art.offsetHeight - window.innerHeight;
+    const s = window.scrollY - art.offsetTop;
+    _prog.style.width = Math.max(0, Math.min(100, (s / h) * 100)) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+
+  // TOC — sidebar on desktop, inline on mobile
+  let _tocObserver = null;
+  function buildTOC() {
+    if (_tocObserver) { _tocObserver.disconnect(); _tocObserver = null; }
+    const page = document.querySelector('.page:target');
+    const nav = page && page.querySelector('.toc-sidebar nav');
+    const prose = page && page.querySelector('.prose');
+    if (!nav || !prose) return;
+    nav.innerHTML = '';
+    const heads = prose.querySelectorAll('h2');
+    if (heads.length < 2) return;
+    const pageId = page.id;
+    const links = [];
+    heads.forEach((h, i) => {
+      if (!h.id) h.id = 'wi-s' + i;
+      const a = document.createElement('a');
+      a.href = '#' + pageId;
+      a.textContent = h.textContent;
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      nav.appendChild(a);
+      links.push({ a, h });
+    });
+    _tocObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          links.forEach(({ a }) => a.classList.remove('toc-active'));
+          const m = links.find(({ h }) => h === entry.target);
+          if (m) m.a.classList.add('toc-active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    heads.forEach(h => _tocObserver.observe(h));
+  }
+
+  // Console easter egg
+  console.log('%c hey.', 'font-size:20px;font-weight:700;color:#1a3770;font-family:serif');
+  console.log('%c you opened devtools. you\'re my kind of person.', 'font-size:13px;color:#5f5f5f');
+  console.log('%c this site is hand-coded [with claude code ofc]. loads in under a second.', 'font-size:13px;color:#5f5f5f');
+  console.log('%c → arfat@duck.com', 'font-size:13px;color:#1a3770');
+
+  // Keyboard shortcuts — g then h/w/a/n/c/r
+  const _kbNav = { h: '#home', w: '#work', a: '#about', n: '#now', c: '#cv', r: '#writing', u: '#uses' };
+  const _tip = Object.assign(document.createElement('div'), {
+    id: 'kb-tip',
+    innerHTML: '<b>g →</b> &nbsp;h home &nbsp;w work &nbsp;a about &nbsp;n now &nbsp;c cv &nbsp;r writing &nbsp;u uses'
+  });
+  document.body.appendChild(_tip);
+
+  let _g = false, _gt;
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' ||
+        e.target.isContentEditable || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === 'g') {
+      _g = true; clearTimeout(_gt);
+      _tip.classList.add('visible');
+      _gt = setTimeout(() => { _g = false; _tip.classList.remove('visible'); }, 1500);
+      return;
+    }
+    if (_g) {
+      _g = false; clearTimeout(_gt); _tip.classList.remove('visible');
+      const hash = _kbNav[e.key];
+      if (!hash) return;
+      if (location.hash === hash) { window.scrollTo({ top: 0, behavior: 'instant' }); return; }
+      location.hash = hash;
+    }
+  });
+</script>
+
+<main>
+
+<!-- ── Home ──────────────────────────────────────────────────────────────── -->
+<section id="home" class="page" aria-label="Home">
+  <header class="home-header">
+    <a href="#space" class="sigil" aria-label="easter egg" style="display:block;width:56px;height:56px">
+    <svg viewBox="0 0 80 80" width="56" height="56" aria-hidden="true">
+      <circle class="si-st" cx="40" cy="44" r="22" stroke-width="1.4"/>
+      <circle class="si-ft" cx="32" cy="40" r="2.5"/>
+      <circle class="si-st" cx="46" cy="48" r="3.5" stroke-width="1"/>
+      <circle class="si-ft" cx="48" cy="36" r="1.5"/>
+      <g transform="translate(56,12) rotate(15)">
+        <circle class="si-sa" r="3.5" stroke-width="1.4"/>
+        <line class="si-sa" x1="0" y1="3.5" x2="0" y2="11" stroke-width="1.4" stroke-linecap="round"/>
+        <line class="si-sa" x1="-4" y1="7" x2="4" y2="7" stroke-width="1.4" stroke-linecap="round"/>
+        <line class="si-sa" x1="0" y1="11" x2="-3" y2="15" stroke-width="1.4" stroke-linecap="round"/>
+        <line class="si-sa" x1="0" y1="11" x2="3" y2="15" stroke-width="1.4" stroke-linecap="round"/>
+      </g>
+      <path class="si-sa" d="M58 16 C 50 22, 48 30, 44 34" stroke-width="1" stroke-dasharray="1.5 2"/>
+    </svg></a>
+    <h1 class="home-h1">i'm arfat.<br>i build the parts of software nobody sees.<br><em>auth, infra, the security layer</em> that gets bolted on last.</h1>
+    <div class="home-prose">
+      <p>Backend engineer at <span style="color:var(--accent)">SageTeck</span> in Islamabad. Evenings go to security tooling — mostly looking at how AI-assisted codebases get exploited in ways that reviews miss.</p>
+      <p>My senior project at FAST-NUCES was <a href="#project-intrasec" class="a-accent">IntraSec</a>, a client-less network vulnerability scanner. Building it is what made this feel real. There's a <a href="#writing-intrasec" class="a-accent">writeup</a>.</p>
+    </div>
+    <p class="home-status"><span class="dark-tag">currently</span> backend at SageTeck &middot; Islamabad</p>
+  </header>
+
+  <hr class="home-rule">
+
+  <div>
+    <a href="#writing-intrasec" class="home-post" style="text-decoration:none">
+      <span class="home-post-title">Inside IntraSec: building a client-less network vulnerability scanner</span>
+      <span class="home-post-date">apr 12, 2026</span>
+    </a>
+    <p class="home-more"><a href="#writing" class="a-accent">more writing →</a></p>
+  </div>
+
+  <hr class="home-rule">
+
+  <div class="home-pages">
+    <a href="#now" class="home-page-item">
+      <span class="home-page-name">now</span>
+      <span class="home-page-desc">where my head is</span>
+    </a>
+    <a href="#cv" class="home-page-item">
+      <span class="home-page-name">cv</span>
+      <span class="home-page-desc">full resume + PDF</span>
+    </a>
+    <a href="#uses" class="home-page-item">
+      <span class="home-page-name">uses</span>
+      <span class="home-page-desc">tools &amp; setup</span>
+    </a>
+    <a href="#resources" class="home-page-item">
+      <span class="home-page-name">resources</span>
+      <span class="home-page-desc">security &amp; backend reading</span>
+    </a>
+  </div>
+
+  <hr class="home-rule">
+
+  <p class="home-contact">
+    <a href="https://github.com/arfatkh" rel="noopener noreferrer">github</a> ·
+    <a href="https://linkedin.com/in/arfatkh" rel="noopener noreferrer">linkedin</a> ·
+    <a href="mailto:arfat@duck.com">arfat@duck.com</a>
+  </p>
+
+  <p class="ps">p.s. — there's a small  <span class="a-accent">thing about an astronaut</span> if you go looking.</p>
+</section>
+
+<!-- ── Writing list ───────────────────────────────────────────────────────── -->
+<section id="writing" class="page" aria-label="Writing">
+  <header class="page-header">
+    <p class="eyebrow">writing</p>
+    <h1 class="page-title">notes from the back of the stack.</h1>
+    <p class="page-sub">backend, security, and the failure modes i keep finding in AI-generated code.</p>
+  </header>
+  <ul role="list">
+    <li class="post-item">
+      <a href="#writing-intrasec">
+        <div class="post-row">
+          <span class="post-title">Inside IntraSec: building a client-less network vulnerability scanner</span>
+          <span class="post-date">apr 12, 2026</span>
+        </div>
+        <p class="post-excerpt">What it does, how it's shaped, and the three things I'd do differently if I started over today.</p>
+      </a>
+    </li>
+  </ul>
+  <p class="writing-note">more soon.</p>
+</section>
+
+<!-- ── IntraSec post ──────────────────────────────────────────────────────── -->
+<section id="writing-intrasec" class="page" aria-label="Post: IntraSec architecture">
+  <div class="post-layout">
+  <aside class="toc-sidebar">
+    <p class="toc-sidebar-label">on this page</p>
+    <nav id="wi-toc"></nav>
+  </aside>
+  <article class="post-article">
+    <p class="post-meta"><span class="dark-tag">apr 12, 2026</span> <span class="dark-tag">12 min</span> &nbsp;security · infra · python · go</p>
+    <h1 class="post-h1">Inside IntraSec: building a client-less network vulnerability scanner</h1>
+    <div class="prose">
+      <p>IntraSec was my senior project at FAST-NUCES, built with <a href="https://github.com/AhmadHanif12" class="a-accent" rel="noopener noreferrer">Muhammad Ahmad Hanif</a> and supervised by Dr. Muhammad Asim. The brief: scan an internal corporate network for vulnerabilities without installing an agent on any machine. The client-less constraint sounds like a limitation someone added to make the project harder. It's actually the whole problem — everything interesting in the architecture comes from that one decision.</p>
+
+      <h2>The asset inventory problem</h2>
+      <p>Active Directory is supposed to be the source of truth for machines on a corporate network. In practice it's more of a historical record. It has entries for machines decommissioned two years ago. It's missing the server someone spun up for a client demo and forgot to register. It has no idea about the Raspberry Pi plugged into a conference room ethernet port. The gap between "what AD says" and "what's actually responding on the wire" is exactly where the unmanaged, unpatched, and forgotten machines live — and those are the machines that tend to become problems.</p>
+      <p>A scanner that starts from the AD inventory inherits all those gaps. So IntraSec builds its own picture of the network first, using AD as a starting point but not as a boundary. Only after we have that picture do we ask what's wrong with each thing in it.</p>
+
+      <h2>Why five services</h2>
+      <p>The system is five microservices behind a Gateway API, with a Next.js frontend, communicating over REST. We didn't split it up for architectural points — the problem genuinely resists a single language or runtime. Network enumeration needs concurrency, and Go's goroutine model handles hundreds of simultaneous LDAP queries and PowerShell sessions cleanly. Risk scoring runs numerical algorithms that are better expressed in Python, with scientific libraries that don't have Go equivalents worth using. CVE lookup is a search problem, and fighting a relational database into doing CPE string matching with version ranges is the wrong fight. Each service got the runtime that made its specific problem easier to write correctly.</p>
+
+      <h2>How discovery actually works</h2>
+      <p>The Go service authenticates to LDAP, pages through computer objects in batches of 1000, then checks each host is actually reachable before touching it. The reachability check runs three probes in order: TCP on SMB port 445, TCP on RPC port 135, ping as a fallback. Offline machines get flagged and skipped — there's no silent dropout from the inventory. For hosts that pass the check, the scanner opens a PowerShell remote session to pull the software inventory: installed applications (both 32-bit and 64-bit registry paths, plus per-user installs), running services, open TCP ports, and system info. You get structured, specific data, not fingerprinting guesses.</p>
+      <p>The real constraint is WinRM. If PowerShell remoting isn't enabled on a machine — restrictive firewall rules, explicit GPO disabling it — the session won't open and the software inventory won't come back. In a domain environment this is usually a one-line GPO fix. Outside a corporate domain, it's a prerequisite that may not be negotiable.</p>
+
+      <h2>Four feeds, one index</h2>
+      <p>The vulnerability database pulls from four sources into Elasticsearch. NIST NVD is the foundation — CVE descriptions, CVSS scores, CPE mappings. FIRST.org's EPSS adds exploit probability scores, which is where things get interesting: a CVE can have a critical CVSS score but a 0.1% chance of being exploited in the next 30 days, or a medium CVSS score and already showing up in active campaigns. CISA's Known Exploited Vulnerabilities catalog tells you the second case directly — if it's on KEV, someone is using it right now. VulnCheck fills gaps in NVD and adds ransomware association data that NVD doesn't track.</p>
+      <p>Elasticsearch was the right call for the CVE index. Matching a software inventory against millions of CVEs is CPE string matching with version range logic — that's a search problem, not a join problem. The nested document model for CPE lists fits naturally in a way it wouldn't in Postgres. Lookups run in parallel across a thread pool and results are cached in Redis for 24 hours, so rescanning a network that hasn't changed much is fast. The query itself runs three tiers in order: exact CPE match (highest boost), wildcard version match, then generalized vendor/product match as a fallback — so you get precise hits where the data supports it without dropping results when version strings don't align exactly.</p>
+
+      <h2>The risk math</h2>
+      <p>Risk scoring uses the model from Reyes et al. [2022]. For each host, we compute a probability of occurrence:</p>
+      <p><code>PO = ((avg_TR + avg_EP) / 2) × ((POE + POP) / 2) × AVT</code></p>
+      <p>TR is threat reliability from CVE reference counts. EP is exploit probability from EPSS. POE is this host's share of total network CVEs. POP is its share of open ports. AVT is a network-wide age-weighted score — it goes up the longer vulnerabilities stay unpatched, which means a host with a two-year-old unpatched CVE scores worse than one with a new one at the same severity. Final risk is <code>PO × avg_impact</code>, bucketed LOW to HIGH.</p>
+      <p>The thing I keep coming back to in this model: most scanners treat a 6-month-old unpatched CVE the same as a day-old one. AVT doesn't. It creates pressure to actually remediate old findings instead of letting them age out of attention.</p>
+      <p>The implementation separates the two signals. PO is returned as its own field alongside the per-CVE impact average — so the risk view can show you worst-severity vulnerabilities without the probabilistic weighting burying them. Both numbers come from the same formula; they're just surfaced independently.</p>
+
+      <h2>What I'd do differently</h2>
+      <p>Scan jobs are kicked off over REST and you poll <code>/refresh-status</code> for progress. It works. It's also annoying — push the job, get a receipt, receive a completion event when it's done. The architecture would have supported a task queue; we just didn't add one.</p>
+      <p>The WinRM coverage gap. Unreachable hosts get flagged in the backend — the online check runs before any session attempt, errors are preserved rather than swallowed. What's missing is a frontend view that surfaces this clearly. There's no dashboard widget that says "these 12 machines haven't been scanned." The data exists; it just doesn't get in your face the way it should. A scan that looks complete but has silent gaps is worse than one that shows you the gaps explicitly.</p>
+      <p>And observability. We had logs. When a scan ran slow, debugging it meant reading timestamps and doing arithmetic. Traces from day one would have saved hours. This is the lesson I keep relearning on every project.</p>
+
+      <p style="margin-top:32px">Full requirements, data models, and test cases are in the <a href="media/pdf/intrasec.pdf" class="a-accent" target="_blank" rel="noopener noreferrer">project report (PDF)</a>.</p>
+    </div>
+    <footer class="prose-footer">
+      <a href="#project-intrasec" class="a-accent">→ see the project page</a> &nbsp;·&nbsp;
+      <a href="#writing" class="a-accent">← back to writing</a>
+    </footer>
+  </article>
+  </div>
+</section>
+
+<!-- ── Work ───────────────────────────────────────────────────────────────── -->
+<section id="work" class="page" aria-label="Work">
+  <header class="page-header">
+    <p class="eyebrow">work</p>
+    <h1 class="page-title">things i've shipped.</h1>
+    <p class="page-sub">production work, projects, contract pieces. the stack varies; the problem is usually the same.</p>
+  </header>
+
+  <div class="section-block">
+    <div class="section-head"><h2 class="section-label">featured</h2></div>
+    <div class="project-card">
+      <div class="project-head">
+        <h3 class="project-name"><a href="#project-intrasec">IntraSec</a></h3>
+        <span class="project-role">Senior project · FAST-NUCES</span>
+      </div>
+      <p class="project-blurb">A client-less network vulnerability scanner. Microservices, real-time asset inventory, AD integration. My senior project — the most useful thing I built as a student.</p>
+      <ul class="stack-list" role="list">
+        <li class="stack-tag">Python</li><li class="stack-tag">Go</li><li class="stack-tag">ElasticSearch</li><li class="stack-tag">Active Directory</li>
+      </ul>
+    </div>
+    <div class="project-card">
+      <div class="project-head">
+        <h3 class="project-name">CTFd First Blood plugin</h3>
+        <span class="project-role">Contract · Trillium Infosec</span>
+      </div>
+      <p class="project-blurb">A custom scoring plugin for CTFd implementing parabolic decay scoring. Deployed at the Ignite Pakistan cybersecurity competition.</p>
+      <ul class="stack-list" role="list">
+        <li class="stack-tag">Python</li><li class="stack-tag">Flask</li><li class="stack-tag">JavaScript</li><li class="stack-tag">SQLAlchemy</li>
+      </ul>
+    </div>
+    <div class="project-card">
+      <div class="project-head">
+        <h3 class="project-name">
+          <a href="https://github.com/arfatkh/shell_shook" rel="noopener noreferrer" class="proj-ext-link">
+            shell_shook — NasCon24 CTF challenge <span style="font-size:13px;color:var(--muted)">↗</span>
+          </a>
+        </h3>
+        <span class="project-role">CTF challenge design · NasCon24</span>
+      </div>
+      <p class="project-blurb">Designed and deployed a Shellshock CTF challenge for NasCon24. Intentionally vulnerable CGI backend, JavaScript-obfuscated client, Docker-isolated per-team instances with unique flags. 60+ teams competed — one solved it.</p>
+      <ul class="stack-list" role="list">
+        <li class="stack-tag">Shell</li><li class="stack-tag">Docker</li><li class="stack-tag">CTFd</li><li class="stack-tag">Shellshock</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-head"><h2 class="section-label">production</h2></div>
+    <div class="project-card">
+      <div class="project-head">
+        <h3 class="project-name">Hospitality SaaS platform</h3>
+        <span class="project-role">Current · SageTeck</span>
+      </div>
+      <p class="project-blurb">Backend on a multi-tenant SaaS — auth, service orchestration, deployment pipelines across distributed services.</p>
+      <ul class="stack-list" role="list">
+        <li class="stack-tag">Azure</li><li class="stack-tag">Multi-tenant</li><li class="stack-tag">PHP</li><li class="stack-tag">MySQL</li>
+      </ul>
+    </div>
+    <div class="project-card">
+      <div class="project-head">
+        <h3 class="project-name">Digital Signage Platform</h3>
+        <span class="project-role">Production</span>
+      </div>
+      <p class="project-blurb">Backend infra for a cloud signage platform serving 1000+ screens across WebOS, Android, and Windows. Built the CMS, the WebOS player, and per-screen licensing.</p>
+      <ul class="stack-list" role="list">
+        <li class="stack-tag">PHP</li><li class="stack-tag">CodeIgniter</li><li class="stack-tag">MySQL</li><li class="stack-tag">WebOS</li>
+      </ul>
+    </div>
+    <div class="project-card">
+      <div class="project-head">
+        <h3 class="project-name">SuiteCRM customizations</h3>
+        <span class="project-role">Production</span>
+      </div>
+      <p class="project-blurb">Module customization, REST integrations, and role-based access controls across four enterprise CRM deployments.</p>
+      <ul class="stack-list" role="list">
+        <li class="stack-tag">PHP</li><li class="stack-tag">SuiteCRM</li><li class="stack-tag">MySQL</li>
+      </ul>
+    </div>
+    <div class="project-card">
+      <div class="project-head">
+        <h3 class="project-name">Dropella analytics APIs</h3>
+        <span class="project-role">Production</span>
+      </div>
+      <p class="project-blurb">Product database and sales-tracking APIs at the core of an e-commerce analytics platform. Multi-threaded request handling cut p99 by ~30% at peak load.</p>
+      <ul class="stack-list" role="list">
+        <li class="stack-tag">Python</li><li class="stack-tag">FastAPI</li><li class="stack-tag">REST</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-head"><h2 class="section-label">personal &amp; older</h2></div>
+    <div class="project-card">
+      <div class="project-head">
+        <h3 class="project-name">
+          <a href="https://github.com/arfatkh/LostNFound" rel="noopener noreferrer" class="proj-ext-link">
+            LostNFound <span style="font-size:13px;color:var(--muted)">↗</span>
+          </a>
+        </h3>
+        <span class="project-role">2021</span>
+      </div>
+      <p class="project-blurb">Backend for managing lost-and-found items in institutional settings. Real-time notifications, user accounts, item search.</p>
+      <ul class="stack-list" role="list">
+        <li class="stack-tag">Java</li><li class="stack-tag">MongoDB</li>
+      </ul>
+    </div>
+    <div class="project-card">
+      <div class="project-head">
+        <h3 class="project-name">
+          <a href="https://github.com/arfatkh/YTSDownloader" rel="noopener noreferrer" class="proj-ext-link">
+            YTS movie scraper <span style="font-size:13px;color:var(--muted)">↗</span>
+          </a>
+        </h3>
+        <span class="project-role">2020</span>
+      </div>
+      <p class="project-blurb">Automated scraper for movie data and subtitles. An early Python project, kept around for posterity.</p>
+      <ul class="stack-list" role="list">
+        <li class="stack-tag">Python</li>
+      </ul>
+    </div>
+    <div class="project-card">
+      <div class="project-head">
+        <h3 class="project-name">
+          <a href="https://github.com/arfatkh/BrickBreakerAssembly" rel="noopener noreferrer" class="proj-ext-link">
+            Brick Breaker in x86 Assembly <span style="font-size:13px;color:var(--muted)">↗</span>
+          </a>
+        </h3>
+        <span class="project-role">2022</span>
+      </div>
+      <p class="project-blurb">Classic brick breaker game written in x86 Assembly. Direct hardware interaction, no runtime, no stdlib.</p>
+      <ul class="stack-list" role="list">
+        <li class="stack-tag">x86 Assembly</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── About ──────────────────────────────────────────────────────────────── -->
+<section id="about" class="page" aria-label="About">
+  <header class="page-header">
+    <p class="eyebrow">about</p>
+    <h1 class="page-title">the longer version.</h1>
+  </header>
+  <p class="body-p">I'm a backend engineer in Islamabad. I write Python and Go, ship PHP and CodeIgniter at my day job, and most of my evenings turn into security tooling.</p>
+  <blockquote class="about-callout">What I keep coming back to is how much code ships without anyone really reading it. Security shows up on the roadmap around the same time the first incident does. That gap is the work I want to do.</blockquote>
+  <p class="body-p">My senior project at FAST-NUCES was <a href="#project-intrasec" class="a-accent">IntraSec</a>, a client-less network vulnerability scanner in Python and Go, supervised by the <a href="https://www.isb.nu.edu.pk/Profile.php?id=5099" class="a-accent" style="align-self:start" rel="noopener noreferrer">Dr. Muhammad Asim</a>. Building it is what made me want to do this for real.</p>
+  <p class="body-p">These days it's a multi-tenant hospitality SaaS at <strong style="color:var(--accent)">SageTeck</strong> — REST APIs, auth, deployment pipelines. On the side, I look at how AI-assisted codebases get exploited: vulnerabilities most reviews miss because they're too new to have names yet.</p>
+  <p class="body-p">For the stack details, see my <a href="#cv" class="a-accent">CV</a>.</p>
+  <p class="body-p">Outside that: چائے </p>
+  <p class="about-cta">
+    building something in backend, infra, or security? or just want to compare notes.<br>
+    <a href="mailto:arfat@duck.com" class="a-accent">arfat@duck.com →</a>
+  </p>
+</section>
+
+<!-- ── Now ────────────────────────────────────────────────────────────────── -->
+<section id="now" class="page" aria-label="Now">
+  <header class="page-header">
+    <p class="eyebrow">now</p>
+    <h1 class="page-title">where my head is.</h1>
+  </header>
+  <p class="now-meta"><span class="dark-tag">may 2026</span> &nbsp;<a href="https://nownownow.com/about" class="a-accent" rel="noopener noreferrer">what is /now?</a></p>
+  <div class="now-block">
+    <p class="now-label">working on</p>
+    <ul class="now-list" role="list">
+      <li>multi-tenant SaaS infra at SageTeck.</li>
+      <li>reviewing AI-generated codebases for recurring vulnerability patterns.</li>
+    </ul>
+  </div>
+  <div class="now-block">
+    <p class="now-label">learning</p>
+    <ul class="now-list" role="list">
+      <li> <em> Designing Data-Intensive Applications</em> — haven't started yet.</li>
+      <li>AppSec deep-dive on auth and SSRF.</li>
+      <li>PortSwigger Web Security Academy labs. ,  maybe ?</li>
+    </ul>
+  </div>
+  <div class="now-block">
+    <p class="now-label">writing</p>
+    <ul class="now-list" role="list">
+      <li>long-form on IntraSec architecture (<a href="#writing-intrasec" class="a-accent">i think this is enough</a>).</li>
+    </ul>
+  </div>
+  <div class="now-block">
+    <p class="now-label">for fun</p>
+    <ul class="now-list" role="list">
+      <li>The Finals , sometimes </li>
+    </ul>
+  </div>
+</section>
+
+<section id="project-intrasec" class="page" aria-label="Project: IntraSec">
+  <header class="project-page-header">
+    <p class="eyebrow"><a href="#work">work</a> / IntraSec</p>
+    <h1 class="project-hero">client-less network vulnerability scanner and asset management for Active Directory environments.</h1>
+    <div class="project-meta-row">
+      <span><strong>role</strong>Senior project · FAST-NUCES</span>
+      <span><strong>year</strong>2024 – 2025</span>
+      <span><strong>stack</strong>Next.js · Go · Python · FastAPI · Elasticsearch · PostgreSQL · Redis</span>
+      <span><strong>supervisor</strong><a href="https://www.isb.nu.edu.pk/Profile.php?id=5099" class="a-accent" style="align-self:start" rel="noopener noreferrer">Dr. Muhammad Asim</a> · HOD, Cyber Security</span>
+    </div>
+    <p style="margin-top:16px;font-family:var(--ui);font-size:12px;color:var(--muted)">
+      Built with <a href="https://github.com/AhmadHanif12" class="a-accent" rel="noopener noreferrer">Muhammad Ahmad Hanif</a>
+    </p>
+  </header>
+
+  <div class="project-section">
+    <p class="project-section-label">the problem</p>
+    <p class="body-p">Enterprise networks don't match their own inventories. Active Directory has stale records — decommissioned machines, unregistered hosts, ghost assets. A scanner that trusts the inventory misses these gaps.</p>
+    <p class="body-p">The constraint the project set itself was no agents. No agents means you can't just install software on each machine and ask it what's running. You have to figure it out from the outside — scanning, LDAP queries, remote sessions.</p>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">architecture</p>
+    <img src="media/img/intrasec/arch-diagram.webp" alt="IntraSec microservices architecture diagram" class="project-screenshot diagram" loading="lazy">
+    <p class="body-p">IntraSec is a Gateway API in front of five microservices. Each handles one thing. REST between them. Frontend is Next.js.</p>
+    <ul style="font-family:var(--body);font-size:17px;line-height:1.8;margin-top:14px;padding-left:20px;list-style:disc;color:var(--text)">
+      <li><strong>Asset Discovery</strong> — Go service. Authenticates against LDAP, enumerates all AD-joined computers, opens PowerShell sessions on each to collect software inventory. Stores results in PostgreSQL.</li>
+      <li><strong>Risk Assessment</strong> — Python + FastAPI. Matches the software inventory against CVE/CPE data, runs the risk scoring algorithm, produces per-host and network-wide risk metrics.</li>
+      <li><strong>Vulnerability DB</strong> — Python service that ingests CVE and CPE data from NIST NVD into Elasticsearch. Keeps the local vulnerability index in sync with upstream feeds.</li>
+      <li><strong>Report Generation</strong> — Produces structured reports from risk assessment output, exportable for audits.</li>
+      <li><strong>Alerts</strong> — Real-time notifications for high-severity findings, with configurable thresholds.</li>
+    </ul>
+    <p class="body-p" style="margin-top:16px">Redis for caching. PostgreSQL for assets, patches, reports. Elasticsearch for CVE/CPE because you need to search millions of records fast.</p>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">deployment</p>
+    <img src="media/img/intrasec/deploy-diagram.webp" alt="IntraSec deployment diagram" class="project-screenshot diagram" loading="lazy">
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">how discovery works</p>
+    <p class="body-p">The Go service authenticates to LDAP, queries for all computer objects, then opens a PowerShell remote session on each to collect software, services, and open ports. Results go into PostgreSQL and downstream to risk assessment.</p>
+    <p class="body-p">If a host returns no data, it's not that nothing is installed — it means the host is offline, unreachable, has remoting disabled, or the credentials don't have access. That's flagged separately.</p>
+    <p class="body-p">Go for this because handling hundreds of concurrent LDAP queries and PowerShell sessions needs proper concurrency primitives. Python for the risk scoring because the math libraries are there.</p>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">risk scoring</p>
+    <p class="body-p">Risk scoring is based on the Reyes et al. [2022] model. For each host, the algorithm calculates a probability of occurrence (PO) factoring in:</p>
+    <ul style="font-family:var(--body);font-size:17px;line-height:1.8;margin-top:14px;padding-left:20px;list-style:disc;color:var(--text)">
+      <li><strong>POE</strong> — probability of exploit, weighted by how many CVEs affect this host vs. the network total</li>
+      <li><strong>POP</strong> — probability of port exploitation, proportional to open ports</li>
+      <li><strong>AVT</strong> — network-wide age-weighted vulnerability time: older unpatched CVEs score higher</li>
+      <li><strong>CVSS impact score</strong> — the severity multiplier from NIST</li>
+    </ul>
+    <p class="body-p" style="margin-top:16px">Final risk factor: <code>risk = PO × avg_impact</code>, where <code>PO = ((avg_TR + avg_EP) / 2) × ((POE + POP) / 2) × AVT</code>. Hosts are then bucketed into LOW / MEDIUM-LOW / MEDIUM / MEDIUM-HIGH / HIGH.</p>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">external intelligence</p>
+    <p class="body-p">The vulnerability database is fed from four APIs to get a complete picture of each CVE:</p>
+    <ul style="font-family:var(--body);font-size:17px;line-height:1.8;margin-top:14px;padding-left:20px;list-style:disc;color:var(--text)">
+      <li><strong>NIST NVD</strong> — authoritative CVE and CPE data, CVSS scores</li>
+      <li><strong>FIRST.org EPSS</strong> — exploit prediction scores: probability a CVE gets exploited in the wild</li>
+      <li><strong>CISA KEV</strong> — known exploited vulnerabilities catalog, actively exploited in the wild</li>
+      <li><strong>VulnCheck</strong> — enriched CVE intelligence including ransomware associations</li>
+    </ul>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">data model</p>
+    <div class="ss-grid">
+      <figure style="margin:0">
+        <img src="media/img/intrasec/cve-schema.webp" alt="CVE Elasticsearch index schema" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
+        <figcaption class="ss-caption">CVE index schema</figcaption>
+      </figure>
+      <figure style="margin:0">
+        <img src="media/img/intrasec/cpe-schema.webp" alt="CPE Elasticsearch index schema" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
+        <figcaption class="ss-caption">CPE index schema</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">the interface</p>
+    <figure style="margin:0 0 12px">
+      <img src="media/img/intrasec/ss-risk-graph.webp" alt="IntraSec network risk graph visualization" loading="lazy" class="project-screenshot" style="aspect-ratio:auto;object-fit:contain">
+      <figcaption class="ss-caption">network risk graph — each node is a host, edges show exposure relationships</figcaption>
+    </figure>
+    <div class="ss-grid">
+      <figure style="margin:0">
+        <img src="media/img/intrasec/ss-dashboard.webp" alt="IntraSec main dashboard" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
+        <figcaption class="ss-caption">main dashboard</figcaption>
+      </figure>
+      <figure style="margin:0">
+        <img src="media/img/intrasec/ss-host-detail.webp" alt="Host detail view" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
+        <figcaption class="ss-caption">host detail</figcaption>
+      </figure>
+      <figure style="margin:0">
+        <img src="media/img/intrasec/ss-software-cves.webp" alt="Software with associated CVEs" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
+        <figcaption class="ss-caption">software → CVE mapping</figcaption>
+      </figure>
+      <figure style="margin:0">
+        <img src="media/img/intrasec/ss-risk-analysis.webp" alt="Risk analysis dashboard" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
+        <figcaption class="ss-caption">risk analysis</figcaption>
+      </figure>
+      <figure style="margin:0">
+        <img src="media/img/intrasec/ss-cve-prioritization.webp" alt="CVE prioritization interface" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
+        <figcaption class="ss-caption">CVE prioritization</figcaption>
+      </figure>
+      <figure style="margin:0">
+        <img src="media/img/intrasec/ss-report-summary.webp" alt="Risk report summary" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
+        <figcaption class="ss-caption">risk report</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">what i'd do differently</p>
+    <p class="body-p">Scan operations are currently request-response via REST. A message queue (RabbitMQ, Kafka) would let scans run async without polling for status. Right now we're building status tracking on top of HTTP.</p>
+    <p class="body-p">PowerShell remoting is the first choice but fragile. A fallback chain would help: WMI if remoting fails, SNMP if that fails, passive fingerprinting as last resort. We'd catch more hosts at the cost of more code paths.</p>
+    <p class="body-p">Logging came late. Should have added distributed tracing from the start — hard to debug why a scan hit a 10-minute timeout without traces across service boundaries.</p>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">links</p>
+    <div class="project-links">
+      <a href="#writing-intrasec" class="project-link-btn primary">read the writeup →</a>
+      <a href="media/pdf/intrasec.pdf" class="project-link-btn" target="_blank" rel="noopener noreferrer">project report (PDF) ↗</a>
+      <span class="project-link-btn" style="cursor:default;opacity:.6">github — not public yet</span>
+    </div>
+  </div>
+
+  <p style="margin-top:48px;font-family:var(--ui);font-size:13px;color:var(--muted)">
+    <a href="#work" class="a-accent">← all work</a>
+  </p>
+</section>
+
+<!-- ── CV ─────────────────────────────────────────────────────────────────── -->
+<section id="cv" class="page" aria-label="CV">
+
+  <div class="cv-header">
+    <h1 class="cv-name">Muhammad Arfat</h1>
+    <div class="cv-contacts">
+      <a href="mailto:arfat@duck.com">arfat@duck.com</a>
+      <span>Islamabad, Pakistan</span>
+      <a href="https://github.com/arfatkh" rel="noopener noreferrer">github.com/arfatkh</a>
+      <a href="https://linkedin.com/in/arfatkh" rel="noopener noreferrer">linkedin.com/in/arfatkh</a>
+      <a href="https://arfat.me" rel="noopener noreferrer">arfat.me</a>
+    </div>
+    <div class="cv-dl">
+      <a href="media/pdf/cv.pdf" download>download PDF ↓</a>
+    </div>
+  </div>
+
+  <div class="cv-section">
+    <p class="cv-section-title">Experience</p>
+
+    <div class="cv-entry">
+      <div class="cv-entry-head">
+        <span class="cv-org">SageTeck</span>
+        <span class="cv-date">2025 – present</span>
+      </div>
+      <p class="cv-role">Full Stack Developer</p>
+      <ul class="cv-bullets">
+        <li>Backend systems on a multi-tenant hospitality SaaS platform on Azure — authentication, service orchestration, deployment pipelines across distributed services.</li>
+        <li>Tenant-isolated data flows, inter-service REST APIs, and role-based access controls across multiple enterprise CRM products.</li>
+        <li>SuiteCRM v7 &amp; v8 customisations: custom logic hooks, scheduler jobs, module development, MySQL schema design and migrations.</li>
+      </ul>
+    </div>
+
+    <div class="cv-entry">
+      <div class="cv-entry-head">
+        <span class="cv-org">Systems Limited</span>
+        <span class="cv-date">2024</span>
+      </div>
+      <p class="cv-role">Software Engineer Intern</p>
+      <ul class="cv-bullets">
+        <li>Worked on enterprise backend systems during a summer internship.</li>
+        <li>Gained exposure to large-scale software delivery pipelines and development practices.</li>
+      </ul>
+    </div>
+
+    <div class="cv-entry">
+      <div class="cv-entry-head">
+        <span class="cv-org">Dropella.io</span>
+        <span class="cv-date">2021 – 2022</span>
+      </div>
+      <p class="cv-role">API Developer</p>
+      <ul class="cv-bullets">
+        <li>Built the Product Database and Sales Tracking APIs at the core of an e-commerce analytics platform using Python and FastAPI.</li>
+        <li>Multi-threaded request handling reduced response times by ~30% at peak load.</li>
+      </ul>
+    </div>
+
+    <div class="cv-entry">
+      <div class="cv-entry-head">
+        <span class="cv-org">FAST-NUCES</span>
+        <span class="cv-date">2021 – 2022</span>
+      </div>
+      <p class="cv-role">Teaching Assistant — Data Structures</p>
+      <ul class="cv-bullets">
+        <li>Conducted lab sessions, marked assignments, and supported students in DS fundamentals.</li>
+      </ul>
+    </div>
+
+    <div class="cv-entry">
+      <div class="cv-entry-head">
+        <span class="cv-org">Rex Media Group</span>
+        <span class="cv-date">2021 – 2022</span>
+      </div>
+      <p class="cv-role">WordPress Developer</p>
+      <ul class="cv-bullets">
+        <li>Built and maintained WordPress sites; plugin integrations and theme customisations for client projects.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cv-section">
+    <p class="cv-section-title">Education</p>
+    <div class="cv-entry">
+      <div class="cv-entry-head">
+        <span class="cv-org">FAST-NUCES, Islamabad</span>
+        <span class="cv-date">2021 – 2025</span>
+      </div>
+      <p class="cv-role">BS Computer Science</p>
+      <ul class="cv-bullets">
+        <li>Dean's Honor List.</li>
+        <li>Senior project: IntraSec — client-less network vulnerability scanner in Python &amp; Go, supervised by Dr. Muhammad Asim, HOD of Cyber Security.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cv-section">
+    <p class="cv-section-title">Skills</p>
+    <div class="cv-skills-grid">
+      <span class="cv-skill-label">Languages</span>
+      <span>Python · Go · C/C++ · Java · PHP · JavaScript · SQL</span>
+      <span class="cv-skill-label">Frameworks</span>
+      <span>FastAPI · Flask · Django · CodeIgniter · SuiteCRM</span>
+      <span class="cv-skill-label">Infrastructure</span>
+      <span>Docker · Nginx · Azure · CI/CD · Kafka · Redis · ElasticSearch</span>
+      <span class="cv-skill-label">Data</span>
+      <span>MySQL · PostgreSQL · MSSQL · MongoDB</span>
+      <span class="cv-skill-label">Tools</span>
+      <span>Git · Linux · REST APIs · Microservices</span>
+    </div>
+  </div>
+
+  <p style="margin-top:48px;font-family:var(--ui);font-size:13px;color:var(--muted)">
+    <a href="#home" class="a-accent">← home</a>
+  </p>
+</section>
+<!-- ── END CV ─────────────────────────────────────────────────────────────── -->
+
+<!-- ── Uses ───────────────────────────────────────────────────────────────── -->
+<section id="uses" class="page" aria-label="Uses">
+  <header class="page-header">
+    <p class="eyebrow">uses</p>
+    <h1 class="page-title">what i actually use.</h1>
+    <p class="page-sub">setup, tools, and software. updated when things change.</p>
+  </header>
+
+  <div class="section-block">
+    <div class="section-head"><h2 class="section-label">editor &amp; terminal</h2></div>
+    <div class="uses-grid">
+      <div class="uses-item">
+        <p class="uses-name">VS Code</p>
+        <p class="uses-desc">main editor. extensions: Pylance, Go, GitLens, REST Client. nothing exotic.</p>
+      </div>
+      <div class="uses-item">
+        <p class="uses-name">Zsh on Ubuntu or Windows Terminal (on a bad day)</p>
+        <p class="uses-desc">Make your life easier by not using Windows </p>
+      </div>
+      <div class="uses-item">
+        <p class="uses-name">Git + GitHub</p>
+        <p class="uses-desc">GitHub Desktop, because life is too short for horrendous CLI commands /həˈrɛn.dəs/.
+
+</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-head"><h2 class="section-label">languages</h2></div>
+    <div class="uses-grid">
+      <div class="uses-item">
+        <p class="uses-name">Python</p>
+        <p class="uses-desc">default for scripting, APIs, security tooling. FastAPI for anything that needs to be fast.</p>
+      </div>
+      <div class="uses-item">
+        <p class="uses-name">Go</p>
+        <p class="uses-desc">network code, anything concurrent. wrote the discovery worker in IntraSec in Go — right choice.</p>
+      </div>
+      <div class="uses-item">
+        <p class="uses-name">PHP + CodeIgniter + SuiteCRM</p>
+        <p class="uses-desc">day job. not glamorous. but it ships.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-head"><h2 class="section-label">infrastructure</h2></div>
+    <div class="uses-grid">
+      <div class="uses-item">
+        <p class="uses-name">Docker</p>
+        <p class="uses-desc">everything runs in containers. if it doesn't work in Docker, it doesn't work.</p>
+      </div>
+      <div class="uses-item">
+        <p class="uses-name">Nginx</p>
+        <p class="uses-desc">reverse proxy, rate limiting, the usual. Caddy when I want something simpler.</p>
+      </div>
+      <div class="uses-item">
+        <p class="uses-name">Azure</p>
+        <p class="uses-desc">what SageTeck runs on. not my preference but I know it well now.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="section-block">
+    <div class="section-head"><h2 class="section-label">this site</h2></div>
+    <div class="uses-grid">
+      <div class="uses-item">
+        <p class="uses-name">Hand-coded site</p>
+        <p class="uses-desc">hand-coded if claude code had hands.</p>
+      </div>
+      <div class="uses-item">
+        <p class="uses-name">Spectral + Space Mono</p>
+        <p class="uses-desc">Spectral for body and headings (serif, readable). Space Mono for UI and code (monospace, distinctive).</p>
+      </div>
+    </div>
+  </div>
+
+  <p style="margin-top:48px;font-family:var(--ui);font-size:13px;color:var(--muted)">
+    <a href="#home" class="a-accent">← home</a>
+  </p>
+</section>
+
+<!-- ── Resources ──────────────────────────────────────────────────────────── -->
+<section id="resources" class="page" aria-label="Resources">
+  <header class="page-header">
+    <p class="eyebrow">resources</p>
+    <h1 class="page-title">things worth reading.</h1>
+    <p class="page-sub">security, backend engineering, and a few things that don't fit a category. these are things i actually use, not a link dump.</p>
+  </header>
+
+  <div class="section-block">
+    <div class="section-head"><h2 class="section-label">start here</h2></div>
+    <div class="res-list">
+      <a href="https://roadmap.sh" class="res-item" rel="noopener noreferrer">
+        <span class="res-name">roadmap.sh</span>
+        <span class="res-desc">when i don't know what to learn next, this usually gets me unstuck.</span>
+      </a>
+      <a href="https://refactoring.guru" class="res-item" rel="noopener noreferrer">
+        <span class="res-name">refactoring.guru</span>
+        <span class="res-desc">the one place design patterns finally clicked without making me hate design patterns.</span>
+      </a>
+      <a href="https://www.youtube.com/playlist?list=PL84A56BC7F4A1F852" class="res-item" rel="noopener noreferrer">
+        <span class="res-name">Stanford CS106A</span>
+        <span class="res-desc">good lectures. even if you already code, it's worth it for the fundamentals.</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-head"><h2 class="section-label">security</h2></div>
+    <div class="res-list">
+      <a href="https://portswigger.net/web-security" class="res-item" rel="noopener noreferrer">
+        <span class="res-name">PortSwigger Web Security Academy</span>
+        <span class="res-desc">solid hands-on labs.</span>
+      </a>
+      <a href="https://owasp.org/www-project-top-ten/" class="res-item" rel="noopener noreferrer">
+        <span class="res-name">OWASP</span>
+        <span class="res-desc">baseline security mindset. not flashy, just necessary.</span>
+      </a>
+      <a href="https://liveoverflow.com" class="res-item" rel="noopener noreferrer">
+        <span class="res-name">LiveOverflow</span>
+        <span class="res-desc">real-world hacking explained properly, without the fake drama.</span>
+      </a>
+      <a href="https://projectzero.google/" class="res-item" rel="noopener noreferrer">
+        <span class="res-name">Project Zero</span>
+        <span class="res-desc">dense writeups from people who actually break things for a living. always worth the time.</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-head"><h2 class="section-label">low-level / systems</h2></div>
+    <div class="res-list">
+      <a href="https://www.youtube.com/@LowLevelLearning" class="res-item" rel="noopener noreferrer">
+        <span class="res-name">Low Level Learning</span>
+        <span class="res-desc">the thing that got me into low-level stuff without making it feel like homework.</span>
+      </a>
+      <a href="https://0-lucas.github.io/digital-garden/99.-Books/Martin-Kleppmann---Designing-Data-Intensive-Applications_-O%E2%80%99Reilly-Media-(2017).pdf" class="res-item" rel="noopener noreferrer">
+        <span class="res-name">Designing Data-Intensive Applications</span>
+        <span class="res-desc">still one of the best systems books. read it slowly and take notes.</span>
+      </a>
+      <a href="https://go.dev/doc/effective_go" class="res-item" rel="noopener noreferrer">
+        <span class="res-name">Effective Go</span>
+        <span class="res-desc">the official Go style guide i still point people to first.</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-head"><h2 class="section-label">practice / tools</h2></div>
+    <div class="res-list">
+      <a href="https://explainshell.com" class="res-item" rel="noopener noreferrer">
+        <span class="res-name">explainshell</span>
+        <span class="res-desc">paste a shell command and it stops looking like wizard text.</span>
+      </a>
+      <a href="https://regex101.com" class="res-item" rel="noopener noreferrer">
+        <span class="res-name">regex101</span>
+        <span class="res-desc">the regex tester i actually trust, mostly because it explains itself.</span>
+      </a>
+      <a href="https://www.hackthebox.com" class="res-item" rel="noopener noreferrer">
+        <span class="res-name">Hack The Box</span>
+        <span class="res-desc">good when you want more pressure than a tutorial can fake.</span>
+      </a>
+    </div>
+  </div>
+
+  <p style="margin-top:48px;font-family:var(--ui);font-size:13px;color:var(--muted)">
+    <a href="#home" class="a-accent">← home</a>
+  </p>
+</section>
+
+<!-- ── Space easter egg ───────────────────────────────────────────────────── -->
+<section id="space" class="page" aria-label="Space">
+  <header class="page-header">
+    <p class="eyebrow">you found it</p>
+    <h1 class="page-title">a small page about an astronaut.</h1>
+  </header>
+  <p class="body-p">This was the hero of the old site. It set a certain tone.</p>
+  <img src="media/img/space.jpg" alt="hero image from the previous version of arfat.me" class="space-screenshot" loading="lazy">
+  <p class="body-p">He got retired to a small sigil in the corner. If you clicked him to get here: nice work.</p>
+  <p class="back-link"><a href="#home" class="a-accent">← back home</a></p>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-left">
+    <div>© muhammad arfat</div>
+    <div class="footer-secondary">
+      <a href="#now">now</a>
+      <a href="#cv">cv</a>
+      <a href="#uses">uses</a>
+      <a href="#resources">resources</a>
+    </div>
+  </div>
+  <div class="footer-links">
+    <a href="https://github.com/arfatkh" rel="noopener noreferrer">github</a>
+    <a href="https://linkedin.com/in/arfatkh" rel="noopener noreferrer">linkedin</a>
+    <a href="mailto:arfat@duck.com">email</a>
+    <span class="dark-tag" title="keyboard shortcuts: g then h/w/a/n/c/r/u" style="cursor:default;opacity:.7">g + key</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  function openLb(src, alt) {
+    var o = document.createElement('div');
+    o.id = 'lb-overlay';
+    var img = document.createElement('img');
+    img.src = src; img.alt = alt || '';
+    o.appendChild(img);
+    document.body.appendChild(o);
+    o.addEventListener('click', function(){ o.remove(); });
+    document.addEventListener('keydown', function esc(e){
+      if (e.key === 'Escape') { o.remove(); document.removeEventListener('keydown', esc); }
+    });
+  }
+  document.addEventListener('click', function(e){
+    var img = e.target.closest('img.project-screenshot, .ss-grid img');
+    if (img) { e.preventDefault(); openLb(img.src, img.alt); }
+  });
+})();
+</script>
+</body>
+</html>
