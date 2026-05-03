@@ -27,6 +27,10 @@
 <link rel="icon" href="media/ico/favicon.ico" sizes="any">
 <meta name="theme-color" content="#ffffff">
 
+<!-- Preload critical fonts (crossorigin required to match @font-face fetch mode) -->
+<link rel="preload" href="media/fonts/spectral-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="media/fonts/spacemono-400.woff2" as="font" type="font/woff2" crossorigin>
+
 <!-- Fonts: self-hosted, zero external requests -->
 <style>
 @font-face { font-family:'Space Mono'; font-style:normal; font-weight:400; font-display:swap; src:url(media/fonts/spacemono-400.woff2) format('woff2'); }
@@ -820,8 +824,30 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
 </nav>
 </div>
 <script>
+  // Reading progress bar
+  const _prog = Object.assign(document.createElement('div'), { id: 'reading-progress' });
+  document.body.appendChild(_prog);
+
+  function updateProgress() {
+    const art = document.querySelector('.page:target .post-article');
+    if (!art) { _prog.style.width = '0'; return; }
+    const h = art.offsetHeight - window.innerHeight;
+    const s = window.scrollY - art.offsetTop;
+    _prog.style.width = Math.max(0, Math.min(100, (s / h) * 100)) + '%';
+  }
+
+  // Single scroll listener — all reads before writes to avoid forced reflow
   window.addEventListener('scroll', () => {
-    document.getElementById('nav-wrapper').classList.toggle('scrolled', window.scrollY > 8);
+    const scrolled = window.scrollY > 8;
+    const art = document.querySelector('.page:target .post-article');
+    let w = 0;
+    if (art) {
+      const h = art.offsetHeight - window.innerHeight;
+      const s = window.scrollY - art.offsetTop;
+      w = Math.max(0, Math.min(100, (s / h) * 100));
+    }
+    document.getElementById('nav-wrapper').classList.toggle('scrolled', scrolled);
+    _prog.style.width = w + '%';
   }, { passive: true });
 
   function _onHash() {
@@ -829,22 +855,11 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
       const t = document.querySelector(location.hash);
       if (t && t.classList.contains('page')) window.scrollTo({ top: 0, behavior: 'instant' });
     }
-    buildTOC(); updateProgress();
+    buildTOC();
+    requestAnimationFrame(updateProgress);
   }
   window.addEventListener('hashchange', _onHash);
   document.addEventListener('DOMContentLoaded', _onHash);
-
-  // Reading progress bar
-  const _prog = Object.assign(document.createElement('div'), { id: 'reading-progress' });
-  document.body.appendChild(_prog);
-  function updateProgress() {
-    const art = document.querySelector('.page:target .post-article, .page:target .post-article');
-    if (!art) { _prog.style.width = '0'; return; }
-    const h = art.offsetHeight - window.innerHeight;
-    const s = window.scrollY - art.offsetTop;
-    _prog.style.width = Math.max(0, Math.min(100, (s / h) * 100)) + '%';
-  }
-  window.addEventListener('scroll', updateProgress, { passive: true });
 
   // TOC — sidebar on desktop, inline on mobile
   let _tocObserver = null;
