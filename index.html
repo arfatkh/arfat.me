@@ -199,7 +199,8 @@ a:hover { opacity: .8; }
   body:has(#cv:target)               #home { display: none; }
 
   /* Active nav states */
-  body:not(:has(.page:target)) .nav-links a[href="#home"] {
+  body:not(:has(.page:target)) .nav-links a[href="#home"],
+  body:has(#home:target)       .nav-links a[href="#home"] {
     color: var(--accent); border-bottom-color: var(--accent);
   }
   body:has(#writing:target)          .nav-links a[href="#writing"],
@@ -327,7 +328,7 @@ main {
   color: var(--text);
 }
 .home-post:hover { opacity: .7; }
-.home-post-title { font-family: var(--body); font-size: 17px; line-height: 1.35; }
+.home-post-title { font-family: var(--body); font-size: 17px; line-height: 1.35; font-weight: 600; }
 .home-post-date  { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
 .home-more { margin-top: 10px; font-family: var(--ui); font-size: 14px; }
 .home-contact { font-family: var(--body); font-size: 17px; color: var(--muted); line-height: 1.8; }
@@ -438,7 +439,7 @@ ul[role="list"] { counter-reset: posts; }
 .prose p { font-family: var(--body); font-size: 18px; line-height: 1.6; }
 .prose p + p { margin-top: 16px; }
 .prose h2 { font-family: var(--body); font-size: 19px; font-weight: 600; margin: 40px 0 12px; color: var(--text); border-left: 2px solid var(--accent); padding-left: 14px; margin-left: -16px; padding-top: 3px; padding-bottom: 2px; }
-.prose-footer { border-top: 1px solid var(--rule); margin-top: 48px; padding-top: 20px; font-family: var(--ui); font-size: 13px; color: var(--muted); }
+.prose-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 18px; border-top: 1px solid var(--rule); margin-top: 48px; padding-top: 20px; font-family: var(--ui); font-size: 13px; color: var(--muted); }
 code {
   font-family: var(--mono);
   font-size: .87em;
@@ -755,6 +756,7 @@ body:has(#writing-intrasec:target) main { max-width: 1080px; }
   .footer-left { align-items: center; }
   .footer-links { flex-wrap: wrap; justify-content: center; }
   .footer-secondary { justify-content: center; }
+  .kb-hint { display: none; }
 }
 
 /* ── CV page ─────────────────────────────────────────────────────────────── */
@@ -957,7 +959,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     </svg></a>
     <h1 class="home-h1">i'm arfat.<br>i build the parts of software nobody sees.<br><em>auth, infra, the security layer</em> that gets bolted on last.</h1>
     <div class="home-prose">
-      <p>Backend engineer at <span style="color:var(--accent)">SageTeck</span> in Islamabad. Most of my time outside the day job goes to <a href="#project-beruni" class="a-accent">Beruni</a>: a read-only AWS security scanner I'm building for startups that ranks findings by what can actually reach your data, not raw severity. It's in closed beta at <a href="https://beruni.app" rel="noopener noreferrer" class="a-accent">beruni.app</a>.</p>
+      <p>Backend engineer at <span style="color:var(--accent)">SageTeck</span> in Islamabad. Most of my time outside the day job goes to <a href="#project-beruni" class="a-accent">Beruni</a>: a read-only AWS security scanner I'm building for startups that ranks findings by what can actually reach your data, not raw severity. It's in closed beta at <a target="_blank" href="https://beruni.app" rel="noopener noreferrer" class="a-accent">beruni.app</a>.</p>
       <p>Before that, my senior project at FAST-NUCES was <a href="#project-intrasec" class="a-accent">IntraSec</a>, a client-less network vulnerability scanner. Building it is what made this feel real. There's a <a href="#writing-intrasec" class="a-accent">writeup</a>.</p>
     </div>
     <p class="home-status"><span class="dark-tag">currently</span> backend at SageTeck &middot; Islamabad</p>
@@ -997,8 +999,8 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
   <hr class="home-rule">
 
   <p class="home-contact">
-    <a href="https://github.com/arfatkh" rel="noopener noreferrer">github</a> ·
-    <a href="https://linkedin.com/in/arfatkh" rel="noopener noreferrer">linkedin</a> ·
+    <a target="_blank" href="https://github.com/arfatkh" rel="noopener noreferrer">github</a> ·
+    <a target="_blank" href="https://linkedin.com/in/arfatkh" rel="noopener noreferrer">linkedin</a> ·
     <a href="mailto:arfat@duck.com">arfat@duck.com</a>
   </p>
 
@@ -1046,7 +1048,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <p class="post-meta"><span class="dark-tag">apr 12, 2026</span> <span class="dark-tag">12 min</span> &nbsp;security · infra · python · go</p>
     <h1 class="post-h1">Inside IntraSec: building a client-less network vulnerability scanner</h1>
     <div class="prose">
-      <p>IntraSec was my senior project at FAST-NUCES, built with <a href="https://github.com/AhmadHanif12" class="a-accent" rel="noopener noreferrer">Muhammad Ahmad Hanif</a> and supervised by Dr. Muhammad Asim. The brief: scan an internal corporate network for vulnerabilities without installing an agent on any machine. The client-less constraint sounds like a limitation someone added to make the project harder. It's actually the whole problem. Everything interesting in the architecture comes from that one decision.</p>
+      <p>IntraSec was my senior project at FAST-NUCES, built with <a target="_blank" href="https://github.com/AhmadHanif12" class="a-accent" rel="noopener noreferrer">Muhammad Ahmad Hanif</a> and supervised by Dr. Muhammad Asim. The brief: scan an internal corporate network for vulnerabilities without installing an agent on any machine. The client-less constraint sounds like a limitation someone added to make the project harder. It's actually the whole problem. Everything interesting in the architecture comes from that one decision.</p>
 
       <h2>The asset inventory problem</h2>
       <p>Active Directory is supposed to be the source of truth for machines on a corporate network. In practice it's more of a historical record. It has entries for machines decommissioned two years ago. It's missing the server someone spun up for a client demo and forgot to register. It has no idea about the Raspberry Pi plugged into a conference room ethernet port. The gap between "what AD says" and "what's actually responding on the wire" is exactly where the unmanaged, unpatched, and forgotten machines live, and those are the machines that tend to become problems.</p>
@@ -1078,8 +1080,8 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
       <p style="margin-top:32px">Full requirements, data models, and test cases are in the <a href="media/pdf/intrasec.pdf" class="a-accent" target="_blank" rel="noopener noreferrer">project report (PDF)</a>.</p>
     </div>
     <footer class="prose-footer">
-      <a href="#project-intrasec" class="a-accent">→ see the project page</a> &nbsp;·&nbsp;
       <a href="#writing" class="a-accent">← back to writing</a>
+      <a href="#project-intrasec" class="a-accent">see the project page →</a>
     </footer>
   </article>
   </div>
@@ -1100,7 +1102,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
         <h3 class="project-name"><a href="#project-beruni">Beruni</a></h3>
         <span class="project-role">Co-founder · ByteOrb</span>
       </div>
-      <p class="project-blurb">A read-only AWS security scanner for startups. Connects through a CloudFormation IAM role, ranks every finding 0–100 by what's actually reachable instead of raw severity, and maps each to CIS, PCI, and GDPR. In closed beta at <a href="https://beruni.app" rel="noopener noreferrer" class="a-accent">beruni.app</a>.</p>
+      <p class="project-blurb">A read-only AWS security scanner for startups. Connects through a CloudFormation IAM role, ranks every finding 0–100 by what's actually reachable instead of raw severity, and maps each to CIS, PCI, and GDPR. In closed beta at <a target="_blank" href="https://beruni.app" rel="noopener noreferrer" class="a-accent">beruni.app</a>.</p>
       <ul class="stack-list" role="list">
         <li class="stack-tag">AWS</li><li class="stack-tag">Python</li><li class="stack-tag">STS</li><li class="stack-tag">CloudFormation</li>
       </ul>
@@ -1128,7 +1130,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <div class="project-card">
       <div class="project-head">
         <h3 class="project-name">
-          <a href="https://github.com/arfatkh/shell_shook" rel="noopener noreferrer" class="proj-ext-link">
+          <a target="_blank" href="https://github.com/arfatkh/shell_shook" rel="noopener noreferrer" class="proj-ext-link">
             shell_shook: NasCon24 CTF challenge <span style="font-size:13px;color:var(--muted)">↗</span>
           </a>
         </h3>
@@ -1190,7 +1192,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <div class="project-card">
       <div class="project-head">
         <h3 class="project-name">
-          <a href="https://github.com/arfatkh/LostNFound" rel="noopener noreferrer" class="proj-ext-link">
+          <a target="_blank" href="https://github.com/arfatkh/LostNFound" rel="noopener noreferrer" class="proj-ext-link">
             LostNFound <span style="font-size:13px;color:var(--muted)">↗</span>
           </a>
         </h3>
@@ -1204,7 +1206,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <div class="project-card">
       <div class="project-head">
         <h3 class="project-name">
-          <a href="https://github.com/arfatkh/YTSDownloader" rel="noopener noreferrer" class="proj-ext-link">
+          <a target="_blank" href="https://github.com/arfatkh/YTSDownloader" rel="noopener noreferrer" class="proj-ext-link">
             YTS movie scraper <span style="font-size:13px;color:var(--muted)">↗</span>
           </a>
         </h3>
@@ -1218,7 +1220,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <div class="project-card">
       <div class="project-head">
         <h3 class="project-name">
-          <a href="https://github.com/arfatkh/BrickBreakerAssembly" rel="noopener noreferrer" class="proj-ext-link">
+          <a target="_blank" href="https://github.com/arfatkh/BrickBreakerAssembly" rel="noopener noreferrer" class="proj-ext-link">
             Brick Breaker in x86 Assembly <span style="font-size:13px;color:var(--muted)">↗</span>
           </a>
         </h3>
@@ -1240,8 +1242,8 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
   </header>
   <p class="body-p">I'm a backend engineer in Islamabad. I write Python and Go, ship PHP and CodeIgniter at my day job, and most of my evenings turn into security tooling.</p>
   <blockquote class="about-callout">What I keep coming back to is how much code ships without anyone really reading it. Security shows up on the roadmap around the same time the first incident does. That gap is the work I want to do.</blockquote>
-  <p class="body-p">My senior project at FAST-NUCES was <a href="#project-intrasec" class="a-accent">IntraSec</a>, a client-less network vulnerability scanner in Python and Go, supervised by the <a href="https://www.isb.nu.edu.pk/Profile.php?id=5099" class="a-accent" style="align-self:start" rel="noopener noreferrer">Dr. Muhammad Asim</a>. Building it is what made me want to do this for real.</p>
-  <p class="body-p">That line of work turned into <a href="#project-beruni" class="a-accent">Beruni</a>, the startup I'm building at <a href="https://byteorb.org" class="a-accent" rel="noopener noreferrer">ByteOrb</a>: a read-only AWS security scanner for the startups that can't justify enterprise security pricing. Same instinct as IntraSec (no agents, read-only, work out the risk from the outside), pointed at the cloud. It's in closed beta.</p>
+  <p class="body-p">My senior project at FAST-NUCES was <a href="#project-intrasec" class="a-accent">IntraSec</a>, a client-less network vulnerability scanner in Python and Go, supervised by the <a target="_blank" href="https://www.isb.nu.edu.pk/Profile.php?id=5099" class="a-accent" style="align-self:start" rel="noopener noreferrer">Dr. Muhammad Asim</a>. Building it is what made me want to do this for real.</p>
+  <p class="body-p">That line of work turned into <a href="#project-beruni" class="a-accent">Beruni</a>, the startup I'm building at <a target="_blank" href="https://byteorb.org" class="a-accent" rel="noopener noreferrer">ByteOrb</a>: a read-only AWS security scanner for the startups that can't justify enterprise security pricing. Same instinct as IntraSec (no agents, read-only, work out the risk from the outside), pointed at the cloud. It's in closed beta.</p>
   <p class="body-p">By day it's a multi-tenant hospitality SaaS at <strong style="color:var(--accent)">SageTeck</strong>: REST APIs, auth, deployment pipelines. On the side, I look at how AI-assisted codebases get exploited: vulnerabilities most reviews miss because they're too new to have names yet.</p>
   <p class="body-p">For the stack details, see my <a href="#cv" class="a-accent">CV</a>.</p>
   <p class="body-p">Outside that: چائے </p>
@@ -1257,7 +1259,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <p class="eyebrow">now</p>
     <h1 class="page-title">where my head is.</h1>
   </header>
-  <p class="now-meta"><span class="dark-tag">jun 2026</span> &nbsp;<a href="https://nownownow.com/about" class="a-accent" rel="noopener noreferrer">what is /now?</a></p>
+  <p class="now-meta"><span class="dark-tag">jun 2026</span> &nbsp;<a target="_blank" href="https://nownownow.com/about" class="a-accent" rel="noopener noreferrer">what is /now?</a></p>
   <div class="now-block">
     <p class="now-label">working on</p>
     <ul class="now-list" role="list">
@@ -1295,8 +1297,8 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <h1 class="project-hero">a read-only AWS security scanner that ranks findings by what can actually reach your data, not by raw severity.</h1>
     <div class="project-meta-row">
       <span><strong>role</strong>Co-founder · backend</span>
-      <span><strong>company</strong><a href="https://byteorb.org" class="a-accent" style="align-self:start" rel="noopener noreferrer">ByteOrb</a></span>
-      <span><strong>stage</strong>Closed beta · <a href="https://beruni.app" class="a-accent" style="align-self:start" rel="noopener noreferrer">beruni.app</a></span>
+      <span><strong>company</strong><a target="_blank" href="https://byteorb.org" class="a-accent" style="align-self:start" rel="noopener noreferrer">ByteOrb</a></span>
+      <span><strong>stage</strong>Closed beta · <a target="_blank" href="https://beruni.app" class="a-accent" style="align-self:start" rel="noopener noreferrer">beruni.app</a></span>
       <span><strong>stack</strong>AWS · Python · STS · CloudFormation · JMESPath</span>
     </div>
     <p style="margin-top:16px;font-family:var(--ui);font-size:12px;color:var(--muted)">
@@ -1390,10 +1392,10 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
       <span><strong>role</strong>Senior project · FAST-NUCES</span>
       <span><strong>year</strong>2024 – 2025</span>
       <span><strong>stack</strong>Next.js · Go · Python · FastAPI · Elasticsearch · PostgreSQL · Redis</span>
-      <span><strong>supervisor</strong><a href="https://www.isb.nu.edu.pk/Profile.php?id=5099" class="a-accent" style="align-self:start" rel="noopener noreferrer">Dr. Muhammad Asim</a> · HOD, Cyber Security</span>
+      <span><strong>supervisor</strong><a target="_blank" href="https://www.isb.nu.edu.pk/Profile.php?id=5099" class="a-accent" style="align-self:start" rel="noopener noreferrer">Dr. Muhammad Asim</a> · HOD, Cyber Security</span>
     </div>
     <p style="margin-top:16px;font-family:var(--ui);font-size:12px;color:var(--muted)">
-      Built with <a href="https://github.com/AhmadHanif12" class="a-accent" rel="noopener noreferrer">Muhammad Ahmad Hanif</a>
+      Built with <a target="_blank" href="https://github.com/AhmadHanif12" class="a-accent" rel="noopener noreferrer">Muhammad Ahmad Hanif</a>
     </p>
   </header>
 
@@ -1529,9 +1531,9 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <div class="cv-contacts">
       <a href="mailto:arfat@duck.com">arfat@duck.com</a>
       <span>Islamabad, Pakistan</span>
-      <a href="https://github.com/arfatkh" rel="noopener noreferrer">github.com/arfatkh</a>
-      <a href="https://linkedin.com/in/arfatkh" rel="noopener noreferrer">linkedin.com/in/arfatkh</a>
-      <a href="https://arfat.me" rel="noopener noreferrer">arfat.me</a>
+      <a target="_blank" href="https://github.com/arfatkh" rel="noopener noreferrer">github.com/arfatkh</a>
+      <a target="_blank" href="https://linkedin.com/in/arfatkh" rel="noopener noreferrer">linkedin.com/in/arfatkh</a>
+      <a target="_blank" href="https://arfat.me" rel="noopener noreferrer">arfat.me</a>
     </div>
     <div class="cv-dl">
       <a href="media/pdf/cv.pdf" download>download PDF ↓</a>
@@ -1746,15 +1748,15 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
   <div class="section-block">
     <div class="section-head"><h2 class="section-label">start here</h2></div>
     <div class="res-list">
-      <a href="https://roadmap.sh" class="res-item" rel="noopener noreferrer">
+      <a target="_blank" href="https://roadmap.sh" class="res-item" rel="noopener noreferrer">
         <span class="res-name">roadmap.sh</span>
         <span class="res-desc">when i don't know what to learn next, this usually gets me unstuck.</span>
       </a>
-      <a href="https://refactoring.guru" class="res-item" rel="noopener noreferrer">
+      <a target="_blank" href="https://refactoring.guru" class="res-item" rel="noopener noreferrer">
         <span class="res-name">refactoring.guru</span>
         <span class="res-desc">the one place design patterns finally clicked without making me hate design patterns.</span>
       </a>
-      <a href="https://www.youtube.com/playlist?list=PL84A56BC7F4A1F852" class="res-item" rel="noopener noreferrer">
+      <a target="_blank" href="https://www.youtube.com/playlist?list=PL84A56BC7F4A1F852" class="res-item" rel="noopener noreferrer">
         <span class="res-name">Stanford CS106A</span>
         <span class="res-desc">good lectures. even if you already code, it's worth it for the fundamentals.</span>
       </a>
@@ -1764,19 +1766,19 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
   <div class="section-block">
     <div class="section-head"><h2 class="section-label">security</h2></div>
     <div class="res-list">
-      <a href="https://portswigger.net/web-security" class="res-item" rel="noopener noreferrer">
+      <a target="_blank" href="https://portswigger.net/web-security" class="res-item" rel="noopener noreferrer">
         <span class="res-name">PortSwigger Web Security Academy</span>
         <span class="res-desc">solid hands-on labs.</span>
       </a>
-      <a href="https://owasp.org/www-project-top-ten/" class="res-item" rel="noopener noreferrer">
+      <a target="_blank" href="https://owasp.org/www-project-top-ten/" class="res-item" rel="noopener noreferrer">
         <span class="res-name">OWASP</span>
         <span class="res-desc">baseline security mindset. not flashy, just necessary.</span>
       </a>
-      <a href="https://liveoverflow.com" class="res-item" rel="noopener noreferrer">
+      <a target="_blank" href="https://liveoverflow.com" class="res-item" rel="noopener noreferrer">
         <span class="res-name">LiveOverflow</span>
         <span class="res-desc">real-world hacking explained properly, without the fake drama.</span>
       </a>
-      <a href="https://projectzero.google/" class="res-item" rel="noopener noreferrer">
+      <a target="_blank" href="https://projectzero.google/" class="res-item" rel="noopener noreferrer">
         <span class="res-name">Project Zero</span>
         <span class="res-desc">dense writeups from people who actually break things for a living. always worth the time.</span>
       </a>
@@ -1786,15 +1788,15 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
   <div class="section-block">
     <div class="section-head"><h2 class="section-label">low-level / systems</h2></div>
     <div class="res-list">
-      <a href="https://www.youtube.com/@LowLevelLearning" class="res-item" rel="noopener noreferrer">
+      <a target="_blank" href="https://www.youtube.com/@LowLevelLearning" class="res-item" rel="noopener noreferrer">
         <span class="res-name">Low Level Learning</span>
         <span class="res-desc">the thing that got me into low-level stuff without making it feel like homework.</span>
       </a>
-      <a href="https://0-lucas.github.io/digital-garden/99.-Books/Martin-Kleppmann---Designing-Data-Intensive-Applications_-O%E2%80%99Reilly-Media-(2017).pdf" class="res-item" rel="noopener noreferrer">
+      <a target="_blank" href="https://0-lucas.github.io/digital-garden/99.-Books/Martin-Kleppmann---Designing-Data-Intensive-Applications_-O%E2%80%99Reilly-Media-(2017).pdf" class="res-item" rel="noopener noreferrer">
         <span class="res-name">Designing Data-Intensive Applications</span>
         <span class="res-desc">still one of the best systems books. read it slowly and take notes.</span>
       </a>
-      <a href="https://go.dev/doc/effective_go" class="res-item" rel="noopener noreferrer">
+      <a target="_blank" href="https://go.dev/doc/effective_go" class="res-item" rel="noopener noreferrer">
         <span class="res-name">Effective Go</span>
         <span class="res-desc">the official Go style guide i still point people to first.</span>
       </a>
@@ -1804,15 +1806,15 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
   <div class="section-block">
     <div class="section-head"><h2 class="section-label">practice / tools</h2></div>
     <div class="res-list">
-      <a href="https://explainshell.com" class="res-item" rel="noopener noreferrer">
+      <a target="_blank" href="https://explainshell.com" class="res-item" rel="noopener noreferrer">
         <span class="res-name">explainshell</span>
         <span class="res-desc">paste a shell command and it stops looking like wizard text.</span>
       </a>
-      <a href="https://regex101.com" class="res-item" rel="noopener noreferrer">
+      <a target="_blank" href="https://regex101.com" class="res-item" rel="noopener noreferrer">
         <span class="res-name">regex101</span>
         <span class="res-desc">the regex tester i actually trust, mostly because it explains itself.</span>
       </a>
-      <a href="https://www.hackthebox.com" class="res-item" rel="noopener noreferrer">
+      <a target="_blank" href="https://www.hackthebox.com" class="res-item" rel="noopener noreferrer">
         <span class="res-name">Hack The Box</span>
         <span class="res-desc">good when you want more pressure than a tutorial can fake.</span>
       </a>
@@ -1849,10 +1851,10 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     </div>
   </div>
   <div class="footer-links">
-    <a href="https://github.com/arfatkh" rel="noopener noreferrer">github</a>
-    <a href="https://linkedin.com/in/arfatkh" rel="noopener noreferrer">linkedin</a>
+    <a target="_blank" href="https://github.com/arfatkh" rel="noopener noreferrer">github</a>
+    <a target="_blank" href="https://linkedin.com/in/arfatkh" rel="noopener noreferrer">linkedin</a>
     <a href="mailto:arfat@duck.com">email</a>
-    <span class="dark-tag" title="keyboard shortcuts: g then h/w/a/n/c/r/u" style="cursor:default;opacity:.7">g + key</span>
+    <span class="dark-tag kb-hint" title="keyboard shortcuts: g then h/w/a/n/c/r/u" style="cursor:default;opacity:.7">g + key</span>
   </div>
 </footer>
 
