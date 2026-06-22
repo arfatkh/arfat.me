@@ -1,0 +1,68 @@
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{title}}</title>
+<meta name="description" content="{{desc}}">
+<meta name="author" content="Muhammad Arfat">
+
+<!-- Open Graph -->
+<meta property="og:title" content="{{ogTitle}}">
+<meta property="og:description" content="{{ogDesc}}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ogUrl}}">
+<meta property="og:image" content="https://arfat.me/og.png">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Muhammad Arfat — Backend &amp; secure systems">
+<meta name="twitter:description" content="Backend engineer building APIs, infrastructure, and security tooling.">
+<meta name="twitter:image" content="https://arfat.me/og.png">
+
+<!-- Canonical -->
+<link rel="canonical" href="{{canonical}}">
+
+<!-- Per-route head extras (e.g. homepage-only hash back-compat redirect) -->
+{{headExtra}}
+
+<!-- Favicon -->
+<link rel="icon" href="/media/ico/favicon.ico" sizes="any">
+<meta name="theme-color" content="#ffffff">
+
+<!-- Preload only the two fonts on screen above the fold on every page
+     (Spectral 400 body, Space Mono 400 nav/UI). The other weights load on
+     demand via @font-face + font-display:swap — preloading them caused
+     "preloaded but not used" warnings on pages that don't show them at once.
+     crossorigin is required to match the anonymous @font-face fetch mode. -->
+<link rel="preload" href="/media/fonts/spectral-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/media/fonts/spacemono-400.woff2" as="font" type="font/woff2" crossorigin>
+
+<!-- Fonts: self-hosted, zero external requests -->
+<style>
+@font-face { font-family:'Space Mono'; font-style:normal; font-weight:400; font-display:swap; src:url(/media/fonts/spacemono-400.woff2) format('woff2'); }
+@font-face { font-family:'Space Mono'; font-style:normal; font-weight:700; font-display:swap; src:url(/media/fonts/spacemono-700.woff2) format('woff2'); }
+@font-face { font-family:'Spectral'; font-style:normal; font-weight:400; font-display:swap; src:url(/media/fonts/spectral-400.woff2) format('woff2'); }
+@font-face { font-family:'Spectral'; font-style:normal; font-weight:500; font-display:swap; src:url(/media/fonts/spectral-500.woff2) format('woff2'); }
+@font-face { font-family:'Spectral'; font-style:normal; font-weight:600; font-display:swap; src:url(/media/fonts/spectral-600.woff2) format('woff2'); }
+@font-face { font-family:'Spectral'; font-style:italic; font-weight:400; font-display:swap; src:url(/media/fonts/spectral-400i.woff2) format('woff2'); }
+</style>
+
+<!-- Structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Muhammad Arfat",
+  "url": "https://arfat.me",
+  "jobTitle": "Backend Engineer",
+  "description": "Backend engineer building APIs, infrastructure, and security tooling.",
+  "address": { "@type": "PostalAddress", "addressLocality": "Islamabad", "addressCountry": "PK" },
+  "sameAs": ["https://github.com/arfatkh", "https://linkedin.com/in/arfatkh"]
+}
+</script>
+
+<!-- Shared stylesheet (extracted from inline <style>) -->
+<link rel="stylesheet" href="/assets/site.css">
+
+<!-- Shared progressive-enhancement script -->
+<script src="/assets/site.js" defer></script>
+</head>

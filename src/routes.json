@@ -1,0 +1,122 @@
+[
+  {
+    "id": "home",
+    "path": "/",
+    "title": "Muhammad Arfat — Backend & secure systems",
+    "description": "Backend engineer building APIs, infrastructure, and security tooling. Based in Islamabad, Pakistan.",
+    "canonical": "https://arfat.me/",
+    "priority": 1.0,
+    "changefreq": "monthly",
+    "activeNav": "/"
+  },
+  {
+    "id": "work",
+    "path": "/work/",
+    "title": "Work — Muhammad Arfat",
+    "description": "Production work, projects, and contract pieces. The stack varies; the problem is usually the same.",
+    "canonical": "https://arfat.me/work/",
+    "priority": 0.8,
+    "changefreq": "monthly",
+    "activeNav": "/work/"
+  },
+  {
+    "id": "writing",
+    "path": "/writing/",
+    "title": "Writing — Muhammad Arfat",
+    "description": "Notes from the back of the stack: backend, security, and the failure modes I keep finding in AI-generated code.",
+    "canonical": "https://arfat.me/writing/",
+    "priority": 0.8,
+    "changefreq": "monthly",
+    "activeNav": "/writing/"
+  },
+  {
+    "id": "writing-intrasec",
+    "path": "/writing/intrasec/",
+    "title": "Inside IntraSec: a client-less network vulnerability scanner — Muhammad Arfat",
+    "description": "How IntraSec scans an internal network for vulnerabilities without installing an agent — the architecture, the five services, and what I'd do differently.",
+    "canonical": "https://arfat.me/writing/intrasec/",
+    "priority": 0.7,
+    "changefreq": "monthly",
+    "activeNav": "/writing/"
+  },
+  {
+    "id": "about",
+    "path": "/about/",
+    "title": "About — Muhammad Arfat",
+    "description": "The longer version: a backend engineer in Islamabad writing Python and Go, shipping SaaS by day and security tooling by night.",
+    "canonical": "https://arfat.me/about/",
+    "priority": 0.7,
+    "changefreq": "monthly",
+    "activeNav": "/about/"
+  },
+  {
+    "id": "now",
+    "path": "/now/",
+    "title": "Now — Muhammad Arfat",
+    "description": "Where my head is right now: what I'm working on, learning, writing, and doing for fun.",
+    "canonical": "https://arfat.me/now/",
+    "priority": 0.6,
+    "changefreq": "monthly",
+    "activeNav": "/about/"
+  },
+  {
+    "id": "project-beruni",
+    "path": "/projects/beruni/",
+    "title": "Beruni — context-aware AWS security scanner — Muhammad Arfat",
+    "description": "Beruni: a read-only AWS security scanner for startups that ranks findings by attack path and reachability, mapped to CIS, PCI, and GDPR. Co-founded at ByteOrb.",
+    "canonical": "https://arfat.me/projects/beruni/",
+    "priority": 0.8,
+    "changefreq": "monthly",
+    "activeNav": "/work/"
+  },
+  {
+    "id": "project-intrasec",
+    "path": "/projects/intrasec/",
+    "title": "IntraSec — client-less vulnerability scanner — Muhammad Arfat",
+    "description": "Project page for IntraSec: a client-less network vulnerability scanner and asset manager for Active Directory environments, built in Go and Python.",
+    "canonical": "https://arfat.me/projects/intrasec/",
+    "priority": 0.7,
+    "changefreq": "monthly",
+    "activeNav": "/work/"
+  },
+  {
+    "id": "cv",
+    "path": "/cv/",
+    "title": "CV — Muhammad Arfat",
+    "description": "Curriculum vitae for Muhammad Arfat: experience, education, and skills in backend engineering and security. Downloadable as PDF.",
+    "canonical": "https://arfat.me/cv/",
+    "priority": 0.7,
+    "changefreq": "monthly",
+    "activeNav": "/about/"
+  },
+  {
+    "id": "uses",
+    "path": "/uses/",
+    "title": "Uses — Muhammad Arfat",
+    "description": "What I actually use: the editor, terminal, tools, and software behind my day-to-day work.",
+    "canonical": "https://arfat.me/uses/",
+    "priority": 0.5,
+    "changefreq": "monthly",
+    "activeNav": "/about/"
+  },
+  {
+    "id": "resources",
+    "path": "/resources/",
+    "title": "Resources — Muhammad Arfat",
+    "description": "Things worth reading on security, backend engineering, and systems — links I actually use, not a link dump.",
+    "canonical": "https://arfat.me/resources/",
+    "priority": 0.5,
+    "changefreq": "monthly",
+    "activeNav": "/about/"
+  },
+  {
+    "id": "space",
+    "path": "/space/",
+    "title": "Space — Muhammad Arfat",
+    "description": "A small page about an astronaut — the retired hero of the old arfat.me, hidden away for anyone who goes looking.",
+    "canonical": "https://arfat.me/space/",
+    "priority": 0.3,
+    "changefreq": "monthly",
+    "activeNav": "/about/"
+  }
+]

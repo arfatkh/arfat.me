@@ -1,0 +1,48 @@
+<section id="writing-intrasec" class="page" aria-label="Post: IntraSec architecture">
+  <div class="post-layout">
+  <aside class="toc-sidebar">
+    <p class="toc-sidebar-label">on this page</p>
+    <nav id="wi-toc"></nav>
+  </aside>
+  <article class="post-article">
+    <p class="post-meta"><span class="dark-tag">apr 12, 2026</span> <span class="dark-tag">12 min</span> &nbsp;security · infra · python · go</p>
+    <h1 class="post-h1">Inside IntraSec: building a client-less network vulnerability scanner</h1>
+    <div class="prose">
+      <p>IntraSec was my senior project at FAST-NUCES, built with <a href="https://github.com/AhmadHanif12" class="a-accent" rel="noopener noreferrer">Muhammad Ahmad Hanif</a> and supervised by Dr. Muhammad Asim. The brief: scan an internal corporate network for vulnerabilities without installing an agent on any machine. The client-less constraint sounds like a limitation someone added to make the project harder. It's actually the whole problem — everything interesting in the architecture comes from that one decision.</p>
+
+      <h2>The asset inventory problem</h2>
+      <p>Active Directory is supposed to be the source of truth for machines on a corporate network. In practice it's more of a historical record. It has entries for machines decommissioned two years ago. It's missing the server someone spun up for a client demo and forgot to register. It has no idea about the Raspberry Pi plugged into a conference room ethernet port. The gap between "what AD says" and "what's actually responding on the wire" is exactly where the unmanaged, unpatched, and forgotten machines live — and those are the machines that tend to become problems.</p>
+      <p>A scanner that starts from the AD inventory inherits all those gaps. So IntraSec builds its own picture of the network first, using AD as a starting point but not as a boundary. Only after we have that picture do we ask what's wrong with each thing in it.</p>
+
+      <h2>Why five services</h2>
+      <p>The system is five microservices behind a Gateway API, with a Next.js frontend, communicating over REST. We didn't split it up for architectural points — the problem genuinely resists a single language or runtime. Network enumeration needs concurrency, and Go's goroutine model handles hundreds of simultaneous LDAP queries and PowerShell sessions cleanly. Risk scoring runs numerical algorithms that are better expressed in Python, with scientific libraries that don't have Go equivalents worth using. CVE lookup is a search problem, and fighting a relational database into doing CPE string matching with version ranges is the wrong fight. Each service got the runtime that made its specific problem easier to write correctly.</p>
+
+      <h2>How discovery actually works</h2>
+      <p>The Go service authenticates to LDAP, pages through computer objects in batches of 1000, then checks each host is actually reachable before touching it. The reachability check runs three probes in order: TCP on SMB port 445, TCP on RPC port 135, ping as a fallback. Offline machines get flagged and skipped — there's no silent dropout from the inventory. For hosts that pass the check, the scanner opens a PowerShell remote session to pull the software inventory: installed applications (both 32-bit and 64-bit registry paths, plus per-user installs), running services, open TCP ports, and system info. You get structured, specific data, not fingerprinting guesses.</p>
+      <p>The real constraint is WinRM. If PowerShell remoting isn't enabled on a machine — restrictive firewall rules, explicit GPO disabling it — the session won't open and the software inventory won't come back. In a domain environment this is usually a one-line GPO fix. Outside a corporate domain, it's a prerequisite that may not be negotiable.</p>
+
+      <h2>Four feeds, one index</h2>
+      <p>The vulnerability database pulls from four sources into Elasticsearch. NIST NVD is the foundation — CVE descriptions, CVSS scores, CPE mappings. FIRST.org's EPSS adds exploit probability scores, which is where things get interesting: a CVE can have a critical CVSS score but a 0.1% chance of being exploited in the next 30 days, or a medium CVSS score and already showing up in active campaigns. CISA's Known Exploited Vulnerabilities catalog tells you the second case directly — if it's on KEV, someone is using it right now. VulnCheck fills gaps in NVD and adds ransomware association data that NVD doesn't track.</p>
+      <p>Elasticsearch was the right call for the CVE index. Matching a software inventory against millions of CVEs is CPE string matching with version range logic — that's a search problem, not a join problem. The nested document model for CPE lists fits naturally in a way it wouldn't in Postgres. Lookups run in parallel across a thread pool and results are cached in Redis for 24 hours, so rescanning a network that hasn't changed much is fast. The query itself runs three tiers in order: exact CPE match (highest boost), wildcard version match, then generalized vendor/product match as a fallback — so you get precise hits where the data supports it without dropping results when version strings don't align exactly.</p>
+
+      <h2>The risk math</h2>
+      <p>Risk scoring uses the model from Reyes et al. [2022]. For each host, we compute a probability of occurrence:</p>
+      <p><code>PO = ((avg_TR + avg_EP) / 2) × ((POE + POP) / 2) × AVT</code></p>
+      <p>TR is threat reliability from CVE reference counts. EP is exploit probability from EPSS. POE is this host's share of total network CVEs. POP is its share of open ports. AVT is a network-wide age-weighted score — it goes up the longer vulnerabilities stay unpatched, which means a host with a two-year-old unpatched CVE scores worse than one with a new one at the same severity. Final risk is <code>PO × avg_impact</code>, bucketed LOW to HIGH.</p>
+      <p>The thing I keep coming back to in this model: most scanners treat a 6-month-old unpatched CVE the same as a day-old one. AVT doesn't. It creates pressure to actually remediate old findings instead of letting them age out of attention.</p>
+      <p>The implementation separates the two signals. PO is returned as its own field alongside the per-CVE impact average — so the risk view can show you worst-severity vulnerabilities without the probabilistic weighting burying them. Both numbers come from the same formula; they're just surfaced independently.</p>
+
+      <h2>What I'd do differently</h2>
+      <p>Scan jobs are kicked off over REST and you poll <code>/refresh-status</code> for progress. It works. It's also annoying — push the job, get a receipt, receive a completion event when it's done. The architecture would have supported a task queue; we just didn't add one.</p>
+      <p>The WinRM coverage gap. Unreachable hosts get flagged in the backend — the online check runs before any session attempt, errors are preserved rather than swallowed. What's missing is a frontend view that surfaces this clearly. There's no dashboard widget that says "these 12 machines haven't been scanned." The data exists; it just doesn't get in your face the way it should. A scan that looks complete but has silent gaps is worse than one that shows you the gaps explicitly.</p>
+      <p>And observability. We had logs. When a scan ran slow, debugging it meant reading timestamps and doing arithmetic. Traces from day one would have saved hours. This is the lesson I keep relearning on every project.</p>
+
+      <p style="margin-top:32px">Full requirements, data models, and test cases are in the <a href="/media/pdf/intrasec.pdf" class="a-accent" target="_blank" rel="noopener noreferrer">project report (PDF)</a>.</p>
+    </div>
+    <footer class="prose-footer">
+      <a href="/projects/intrasec/" class="a-accent">→ see the project page</a> &nbsp;·&nbsp;
+      <a href="/writing/" class="a-accent">← back to writing</a>
+    </footer>
+  </article>
+  </div>
+</section>
