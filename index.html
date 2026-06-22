@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Muhammad Arfat — Backend &amp; secure systems</title>
+<title>Muhammad Arfat · Backend &amp; secure systems</title>
 <meta name="description" content="Backend engineer building APIs, infrastructure, and security tooling. Based in Islamabad, Pakistan.">
 <meta name="author" content="Muhammad Arfat">
 
 <!-- Open Graph -->
-<meta property="og:title" content="Muhammad Arfat — Backend &amp; secure systems">
+<meta property="og:title" content="Muhammad Arfat · Backend &amp; secure systems">
 <meta property="og:description" content="Backend engineer building APIs, infrastructure, and security tooling.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://arfat.me">
@@ -16,7 +16,7 @@
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Muhammad Arfat — Backend &amp; secure systems">
+<meta name="twitter:title" content="Muhammad Arfat · Backend &amp; secure systems">
 <meta name="twitter:description" content="Backend engineer building APIs, infrastructure, and security tooling.">
 <meta name="twitter:image" content="https://arfat.me/og.png">
 
@@ -194,6 +194,7 @@ a:hover { opacity: .8; }
   body:has(#space:target)            #home,
   body:has(#uses:target)             #home,
   body:has(#resources:target)        #home { display: none; }
+  body:has(#project-beruni:target)   #home,
   body:has(#project-intrasec:target) #home { display: none; }
   body:has(#cv:target)               #home { display: none; }
 
@@ -312,10 +313,10 @@ main {
   padding-left: 20px;
   margin-left: -23px;
 }
-.home-prose { margin-top: 18px; max-width: 50ch; }
-.home-status { margin-top: 20px; font-family: var(--mono); font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
-.home-prose p { font-family: var(--body); font-size: 17px; line-height: 1.7; color: var(--text); }
-.home-prose p + p { margin-top: 12px; }
+.home-prose { margin-top: 22px; max-width: 64ch; }
+.home-status { margin-top: 24px; font-family: var(--mono); font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.home-prose p { font-family: var(--body); font-size: 18px; line-height: 1.75; color: var(--text); text-wrap: pretty; }
+.home-prose p + p { margin-top: 16px; }
 .home-rule { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
 .home-post {
   display: flex;
@@ -388,7 +389,7 @@ ul[role="list"] { counter-reset: posts; }
 }
 .project-card:hover { background: #f0f3fa; }
 
-/* Featured cards — first section-block on work page */
+/* Featured cards: first section-block on work page */
 #work .section-block:first-of-type .project-card {
   padding: 18px 10px 18px 14px;
   margin-left: -16px;
@@ -738,7 +739,7 @@ body:has(#writing-intrasec:target) main { max-width: 1080px; }
   .sigil { display: none; }
   .home-h1, .page-title, .project-hero { margin-left: -17px; padding-left: 14px; }
 
-  /* Mobile nav — wrap cleanly */
+  /* Mobile nav: wrap cleanly */
   .site-nav { padding: 14px 20px; gap: 10px; }
   .nav-links { gap: 14px; font-size: 12px; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .nav-links::-webkit-scrollbar { display: none; }
@@ -838,7 +839,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     _prog.style.width = Math.max(0, Math.min(100, (s / h) * 100)) + '%';
   }
 
-  // Single scroll listener — all reads before writes to avoid forced reflow
+  // Single scroll listener: all reads before writes to avoid forced reflow
   window.addEventListener('scroll', () => {
     const scrolled = window.scrollY > 8;
     const art = document.querySelector('.page:target .post-article');
@@ -863,7 +864,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
   window.addEventListener('hashchange', _onHash);
   document.addEventListener('DOMContentLoaded', _onHash);
 
-  // TOC — sidebar on desktop, inline on mobile
+  // TOC: sidebar on desktop, inline on mobile
   let _tocObserver = null;
   function buildTOC() {
     if (_tocObserver) { _tocObserver.disconnect(); _tocObserver = null; }
@@ -906,7 +907,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
   console.log('%c this site is hand-coded [with claude code ofc]. loads in under a second.', 'font-size:13px;color:#5f5f5f');
   console.log('%c → arfat@duck.com', 'font-size:13px;color:#1a3770');
 
-  // Keyboard shortcuts — g then h/w/a/n/c/r
+  // Keyboard shortcuts: g then h/w/a/n/c/r
   const _kbNav = { h: '#home', w: '#work', a: '#about', n: '#now', c: '#cv', r: '#writing', u: '#uses' };
   const _tip = Object.assign(document.createElement('div'), {
     id: 'kb-tip',
@@ -956,8 +957,8 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     </svg></a>
     <h1 class="home-h1">i'm arfat.<br>i build the parts of software nobody sees.<br><em>auth, infra, the security layer</em> that gets bolted on last.</h1>
     <div class="home-prose">
-      <p>Backend engineer at <span style="color:var(--accent)">SageTeck</span> in Islamabad. Evenings go to security tooling — mostly looking at how AI-assisted codebases get exploited in ways that reviews miss.</p>
-      <p>My senior project at FAST-NUCES was <a href="#project-intrasec" class="a-accent">IntraSec</a>, a client-less network vulnerability scanner. Building it is what made this feel real. There's a <a href="#writing-intrasec" class="a-accent">writeup</a>.</p>
+      <p>Backend engineer at <span style="color:var(--accent)">SageTeck</span> in Islamabad. Most of my time outside the day job goes to <a href="#project-beruni" class="a-accent">Beruni</a>: a read-only AWS security scanner I'm building for startups that ranks findings by what can actually reach your data, not raw severity. It's in closed beta at <a href="https://beruni.app" rel="noopener noreferrer" class="a-accent">beruni.app</a>.</p>
+      <p>Before that, my senior project at FAST-NUCES was <a href="#project-intrasec" class="a-accent">IntraSec</a>, a client-less network vulnerability scanner. Building it is what made this feel real. There's a <a href="#writing-intrasec" class="a-accent">writeup</a>.</p>
     </div>
     <p class="home-status"><span class="dark-tag">currently</span> backend at SageTeck &middot; Islamabad</p>
   </header>
@@ -1001,7 +1002,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <a href="mailto:arfat@duck.com">arfat@duck.com</a>
   </p>
 
-  <p class="ps">p.s. — there's a small  <span class="a-accent">thing about an astronaut</span> if you go looking.</p>
+  <p class="ps">p.s. there's a small <span class="a-accent">thing about an astronaut</span> if you go looking.</p>
 </section>
 
 <!-- ── Writing list ───────────────────────────────────────────────────────── -->
@@ -1012,6 +1013,15 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <p class="page-sub">backend, security, and the failure modes i keep finding in AI-generated code.</p>
   </header>
   <ul role="list">
+    <li class="post-item">
+      <a href="https://beruni.app/blog/beruni-vs-scoutsuite" target="_blank" rel="noopener noreferrer">
+        <div class="post-row">
+          <span class="post-title">Beruni vs ScoutSuite: which AWS security tool fits your team <span style="font-size:13px;color:var(--muted)">↗</span></span>
+          <span class="post-date">jun 18, 2026</span>
+        </div>
+        <p class="post-excerpt">ScoutSuite is the free Python CLI for one-off AWS audits. Beruni is the hosted, compliance-mapped scan built for SOC 2 and PCI evidence. How to choose.</p>
+      </a>
+    </li>
     <li class="post-item">
       <a href="#writing-intrasec">
         <div class="post-row">
@@ -1036,33 +1046,33 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <p class="post-meta"><span class="dark-tag">apr 12, 2026</span> <span class="dark-tag">12 min</span> &nbsp;security · infra · python · go</p>
     <h1 class="post-h1">Inside IntraSec: building a client-less network vulnerability scanner</h1>
     <div class="prose">
-      <p>IntraSec was my senior project at FAST-NUCES, built with <a href="https://github.com/AhmadHanif12" class="a-accent" rel="noopener noreferrer">Muhammad Ahmad Hanif</a> and supervised by Dr. Muhammad Asim. The brief: scan an internal corporate network for vulnerabilities without installing an agent on any machine. The client-less constraint sounds like a limitation someone added to make the project harder. It's actually the whole problem — everything interesting in the architecture comes from that one decision.</p>
+      <p>IntraSec was my senior project at FAST-NUCES, built with <a href="https://github.com/AhmadHanif12" class="a-accent" rel="noopener noreferrer">Muhammad Ahmad Hanif</a> and supervised by Dr. Muhammad Asim. The brief: scan an internal corporate network for vulnerabilities without installing an agent on any machine. The client-less constraint sounds like a limitation someone added to make the project harder. It's actually the whole problem. Everything interesting in the architecture comes from that one decision.</p>
 
       <h2>The asset inventory problem</h2>
-      <p>Active Directory is supposed to be the source of truth for machines on a corporate network. In practice it's more of a historical record. It has entries for machines decommissioned two years ago. It's missing the server someone spun up for a client demo and forgot to register. It has no idea about the Raspberry Pi plugged into a conference room ethernet port. The gap between "what AD says" and "what's actually responding on the wire" is exactly where the unmanaged, unpatched, and forgotten machines live — and those are the machines that tend to become problems.</p>
+      <p>Active Directory is supposed to be the source of truth for machines on a corporate network. In practice it's more of a historical record. It has entries for machines decommissioned two years ago. It's missing the server someone spun up for a client demo and forgot to register. It has no idea about the Raspberry Pi plugged into a conference room ethernet port. The gap between "what AD says" and "what's actually responding on the wire" is exactly where the unmanaged, unpatched, and forgotten machines live, and those are the machines that tend to become problems.</p>
       <p>A scanner that starts from the AD inventory inherits all those gaps. So IntraSec builds its own picture of the network first, using AD as a starting point but not as a boundary. Only after we have that picture do we ask what's wrong with each thing in it.</p>
 
       <h2>Why five services</h2>
-      <p>The system is five microservices behind a Gateway API, with a Next.js frontend, communicating over REST. We didn't split it up for architectural points — the problem genuinely resists a single language or runtime. Network enumeration needs concurrency, and Go's goroutine model handles hundreds of simultaneous LDAP queries and PowerShell sessions cleanly. Risk scoring runs numerical algorithms that are better expressed in Python, with scientific libraries that don't have Go equivalents worth using. CVE lookup is a search problem, and fighting a relational database into doing CPE string matching with version ranges is the wrong fight. Each service got the runtime that made its specific problem easier to write correctly.</p>
+      <p>The system is five microservices behind a Gateway API, with a Next.js frontend, communicating over REST. We didn't split it up for architectural points. The problem genuinely resists a single language or runtime. Network enumeration needs concurrency, and Go's goroutine model handles hundreds of simultaneous LDAP queries and PowerShell sessions cleanly. Risk scoring runs numerical algorithms that are better expressed in Python, with scientific libraries that don't have Go equivalents worth using. CVE lookup is a search problem, and fighting a relational database into doing CPE string matching with version ranges is the wrong fight. Each service got the runtime that made its specific problem easier to write correctly.</p>
 
       <h2>How discovery actually works</h2>
-      <p>The Go service authenticates to LDAP, pages through computer objects in batches of 1000, then checks each host is actually reachable before touching it. The reachability check runs three probes in order: TCP on SMB port 445, TCP on RPC port 135, ping as a fallback. Offline machines get flagged and skipped — there's no silent dropout from the inventory. For hosts that pass the check, the scanner opens a PowerShell remote session to pull the software inventory: installed applications (both 32-bit and 64-bit registry paths, plus per-user installs), running services, open TCP ports, and system info. You get structured, specific data, not fingerprinting guesses.</p>
-      <p>The real constraint is WinRM. If PowerShell remoting isn't enabled on a machine — restrictive firewall rules, explicit GPO disabling it — the session won't open and the software inventory won't come back. In a domain environment this is usually a one-line GPO fix. Outside a corporate domain, it's a prerequisite that may not be negotiable.</p>
+      <p>The Go service authenticates to LDAP, pages through computer objects in batches of 1000, then checks each host is actually reachable before touching it. The reachability check runs three probes in order: TCP on SMB port 445, TCP on RPC port 135, ping as a fallback. Offline machines get flagged and skipped: there's no silent dropout from the inventory. For hosts that pass the check, the scanner opens a PowerShell remote session to pull the software inventory: installed applications (both 32-bit and 64-bit registry paths, plus per-user installs), running services, open TCP ports, and system info. You get structured, specific data, not fingerprinting guesses.</p>
+      <p>The real constraint is WinRM. If PowerShell remoting isn't enabled on a machine (restrictive firewall rules, explicit GPO disabling it), the session won't open and the software inventory won't come back. In a domain environment this is usually a one-line GPO fix. Outside a corporate domain, it's a prerequisite that may not be negotiable.</p>
 
       <h2>Four feeds, one index</h2>
-      <p>The vulnerability database pulls from four sources into Elasticsearch. NIST NVD is the foundation — CVE descriptions, CVSS scores, CPE mappings. FIRST.org's EPSS adds exploit probability scores, which is where things get interesting: a CVE can have a critical CVSS score but a 0.1% chance of being exploited in the next 30 days, or a medium CVSS score and already showing up in active campaigns. CISA's Known Exploited Vulnerabilities catalog tells you the second case directly — if it's on KEV, someone is using it right now. VulnCheck fills gaps in NVD and adds ransomware association data that NVD doesn't track.</p>
-      <p>Elasticsearch was the right call for the CVE index. Matching a software inventory against millions of CVEs is CPE string matching with version range logic — that's a search problem, not a join problem. The nested document model for CPE lists fits naturally in a way it wouldn't in Postgres. Lookups run in parallel across a thread pool and results are cached in Redis for 24 hours, so rescanning a network that hasn't changed much is fast. The query itself runs three tiers in order: exact CPE match (highest boost), wildcard version match, then generalized vendor/product match as a fallback — so you get precise hits where the data supports it without dropping results when version strings don't align exactly.</p>
+      <p>The vulnerability database pulls from four sources into Elasticsearch. NIST NVD is the foundation: CVE descriptions, CVSS scores, CPE mappings. FIRST.org's EPSS adds exploit probability scores, which is where things get interesting: a CVE can have a critical CVSS score but a 0.1% chance of being exploited in the next 30 days, or a medium CVSS score and already showing up in active campaigns. CISA's Known Exploited Vulnerabilities catalog tells you the second case directly: if it's on KEV, someone is using it right now. VulnCheck fills gaps in NVD and adds ransomware association data that NVD doesn't track.</p>
+      <p>Elasticsearch was the right call for the CVE index. Matching a software inventory against millions of CVEs is CPE string matching with version range logic: that's a search problem, not a join problem. The nested document model for CPE lists fits naturally in a way it wouldn't in Postgres. Lookups run in parallel across a thread pool and results are cached in Redis for 24 hours, so rescanning a network that hasn't changed much is fast. The query itself runs three tiers in order: exact CPE match (highest boost), wildcard version match, then generalized vendor/product match as a fallback, so you get precise hits where the data supports it without dropping results when version strings don't align exactly.</p>
 
       <h2>The risk math</h2>
       <p>Risk scoring uses the model from Reyes et al. [2022]. For each host, we compute a probability of occurrence:</p>
       <p><code>PO = ((avg_TR + avg_EP) / 2) × ((POE + POP) / 2) × AVT</code></p>
-      <p>TR is threat reliability from CVE reference counts. EP is exploit probability from EPSS. POE is this host's share of total network CVEs. POP is its share of open ports. AVT is a network-wide age-weighted score — it goes up the longer vulnerabilities stay unpatched, which means a host with a two-year-old unpatched CVE scores worse than one with a new one at the same severity. Final risk is <code>PO × avg_impact</code>, bucketed LOW to HIGH.</p>
+      <p>TR is threat reliability from CVE reference counts. EP is exploit probability from EPSS. POE is this host's share of total network CVEs. POP is its share of open ports. AVT is a network-wide age-weighted score that goes up the longer vulnerabilities stay unpatched, which means a host with a two-year-old unpatched CVE scores worse than one with a new one at the same severity. Final risk is <code>PO × avg_impact</code>, bucketed LOW to HIGH.</p>
       <p>The thing I keep coming back to in this model: most scanners treat a 6-month-old unpatched CVE the same as a day-old one. AVT doesn't. It creates pressure to actually remediate old findings instead of letting them age out of attention.</p>
-      <p>The implementation separates the two signals. PO is returned as its own field alongside the per-CVE impact average — so the risk view can show you worst-severity vulnerabilities without the probabilistic weighting burying them. Both numbers come from the same formula; they're just surfaced independently.</p>
+      <p>The implementation separates the two signals. PO is returned as its own field alongside the per-CVE impact average, so the risk view can show you worst-severity vulnerabilities without the probabilistic weighting burying them. Both numbers come from the same formula; they're just surfaced independently.</p>
 
       <h2>What I'd do differently</h2>
-      <p>Scan jobs are kicked off over REST and you poll <code>/refresh-status</code> for progress. It works. It's also annoying — push the job, get a receipt, receive a completion event when it's done. The architecture would have supported a task queue; we just didn't add one.</p>
-      <p>The WinRM coverage gap. Unreachable hosts get flagged in the backend — the online check runs before any session attempt, errors are preserved rather than swallowed. What's missing is a frontend view that surfaces this clearly. There's no dashboard widget that says "these 12 machines haven't been scanned." The data exists; it just doesn't get in your face the way it should. A scan that looks complete but has silent gaps is worse than one that shows you the gaps explicitly.</p>
+      <p>Scan jobs are kicked off over REST and you poll <code>/refresh-status</code> for progress. It works. It's also annoying: push the job, get a receipt, receive a completion event when it's done. The architecture would have supported a task queue; we just didn't add one.</p>
+      <p>The WinRM coverage gap. Unreachable hosts get flagged in the backend. The online check runs before any session attempt, and errors are preserved rather than swallowed. What's missing is a frontend view that surfaces this clearly. There's no dashboard widget that says "these 12 machines haven't been scanned." The data exists; it just doesn't get in your face the way it should. A scan that looks complete but has silent gaps is worse than one that shows you the gaps explicitly.</p>
       <p>And observability. We had logs. When a scan ran slow, debugging it meant reading timestamps and doing arithmetic. Traces from day one would have saved hours. This is the lesson I keep relearning on every project.</p>
 
       <p style="margin-top:32px">Full requirements, data models, and test cases are in the <a href="media/pdf/intrasec.pdf" class="a-accent" target="_blank" rel="noopener noreferrer">project report (PDF)</a>.</p>
@@ -1087,10 +1097,20 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <div class="section-head"><h2 class="section-label">featured</h2></div>
     <div class="project-card">
       <div class="project-head">
+        <h3 class="project-name"><a href="#project-beruni">Beruni</a></h3>
+        <span class="project-role">Co-founder · ByteOrb</span>
+      </div>
+      <p class="project-blurb">A read-only AWS security scanner for startups. Connects through a CloudFormation IAM role, ranks every finding 0–100 by what's actually reachable instead of raw severity, and maps each to CIS, PCI, and GDPR. In closed beta at <a href="https://beruni.app" rel="noopener noreferrer" class="a-accent">beruni.app</a>.</p>
+      <ul class="stack-list" role="list">
+        <li class="stack-tag">AWS</li><li class="stack-tag">Python</li><li class="stack-tag">STS</li><li class="stack-tag">CloudFormation</li>
+      </ul>
+    </div>
+    <div class="project-card">
+      <div class="project-head">
         <h3 class="project-name"><a href="#project-intrasec">IntraSec</a></h3>
         <span class="project-role">Senior project · FAST-NUCES</span>
       </div>
-      <p class="project-blurb">A client-less network vulnerability scanner. Microservices, real-time asset inventory, AD integration. My senior project — the most useful thing I built as a student.</p>
+      <p class="project-blurb">A client-less network vulnerability scanner. Microservices, real-time asset inventory, AD integration. My senior project, the most useful thing I built as a student.</p>
       <ul class="stack-list" role="list">
         <li class="stack-tag">Python</li><li class="stack-tag">Go</li><li class="stack-tag">ElasticSearch</li><li class="stack-tag">Active Directory</li>
       </ul>
@@ -1109,12 +1129,12 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
       <div class="project-head">
         <h3 class="project-name">
           <a href="https://github.com/arfatkh/shell_shook" rel="noopener noreferrer" class="proj-ext-link">
-            shell_shook — NasCon24 CTF challenge <span style="font-size:13px;color:var(--muted)">↗</span>
+            shell_shook: NasCon24 CTF challenge <span style="font-size:13px;color:var(--muted)">↗</span>
           </a>
         </h3>
         <span class="project-role">CTF challenge design · NasCon24</span>
       </div>
-      <p class="project-blurb">Designed and deployed a Shellshock CTF challenge for NasCon24. Intentionally vulnerable CGI backend, JavaScript-obfuscated client, Docker-isolated per-team instances with unique flags. 60+ teams competed — one solved it.</p>
+      <p class="project-blurb">Designed and deployed a Shellshock CTF challenge for NasCon24. Intentionally vulnerable CGI backend, JavaScript-obfuscated client, Docker-isolated per-team instances with unique flags. 60+ teams competed. One solved it.</p>
       <ul class="stack-list" role="list">
         <li class="stack-tag">Shell</li><li class="stack-tag">Docker</li><li class="stack-tag">CTFd</li><li class="stack-tag">Shellshock</li>
       </ul>
@@ -1128,7 +1148,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
         <h3 class="project-name">Hospitality SaaS platform</h3>
         <span class="project-role">Current · SageTeck</span>
       </div>
-      <p class="project-blurb">Backend on a multi-tenant SaaS — auth, service orchestration, deployment pipelines across distributed services.</p>
+      <p class="project-blurb">Backend on a multi-tenant SaaS: auth, service orchestration, deployment pipelines across distributed services.</p>
       <ul class="stack-list" role="list">
         <li class="stack-tag">Azure</li><li class="stack-tag">Multi-tenant</li><li class="stack-tag">PHP</li><li class="stack-tag">MySQL</li>
       </ul>
@@ -1221,7 +1241,8 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
   <p class="body-p">I'm a backend engineer in Islamabad. I write Python and Go, ship PHP and CodeIgniter at my day job, and most of my evenings turn into security tooling.</p>
   <blockquote class="about-callout">What I keep coming back to is how much code ships without anyone really reading it. Security shows up on the roadmap around the same time the first incident does. That gap is the work I want to do.</blockquote>
   <p class="body-p">My senior project at FAST-NUCES was <a href="#project-intrasec" class="a-accent">IntraSec</a>, a client-less network vulnerability scanner in Python and Go, supervised by the <a href="https://www.isb.nu.edu.pk/Profile.php?id=5099" class="a-accent" style="align-self:start" rel="noopener noreferrer">Dr. Muhammad Asim</a>. Building it is what made me want to do this for real.</p>
-  <p class="body-p">These days it's a multi-tenant hospitality SaaS at <strong style="color:var(--accent)">SageTeck</strong> — REST APIs, auth, deployment pipelines. On the side, I look at how AI-assisted codebases get exploited: vulnerabilities most reviews miss because they're too new to have names yet.</p>
+  <p class="body-p">That line of work turned into <a href="#project-beruni" class="a-accent">Beruni</a>, the startup I'm building at <a href="https://byteorb.org" class="a-accent" rel="noopener noreferrer">ByteOrb</a>: a read-only AWS security scanner for the startups that can't justify enterprise security pricing. Same instinct as IntraSec (no agents, read-only, work out the risk from the outside), pointed at the cloud. It's in closed beta.</p>
+  <p class="body-p">By day it's a multi-tenant hospitality SaaS at <strong style="color:var(--accent)">SageTeck</strong>: REST APIs, auth, deployment pipelines. On the side, I look at how AI-assisted codebases get exploited: vulnerabilities most reviews miss because they're too new to have names yet.</p>
   <p class="body-p">For the stack details, see my <a href="#cv" class="a-accent">CV</a>.</p>
   <p class="body-p">Outside that: چائے </p>
   <p class="about-cta">
@@ -1236,10 +1257,11 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <p class="eyebrow">now</p>
     <h1 class="page-title">where my head is.</h1>
   </header>
-  <p class="now-meta"><span class="dark-tag">may 2026</span> &nbsp;<a href="https://nownownow.com/about" class="a-accent" rel="noopener noreferrer">what is /now?</a></p>
+  <p class="now-meta"><span class="dark-tag">jun 2026</span> &nbsp;<a href="https://nownownow.com/about" class="a-accent" rel="noopener noreferrer">what is /now?</a></p>
   <div class="now-block">
     <p class="now-label">working on</p>
     <ul class="now-list" role="list">
+      <li>building <a href="#project-beruni" class="a-accent">Beruni</a>, a read-only AWS security scanner for startups, now in closed beta.</li>
       <li>multi-tenant SaaS infra at SageTeck.</li>
       <li>reviewing AI-generated codebases for recurring vulnerability patterns.</li>
     </ul>
@@ -1247,7 +1269,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
   <div class="now-block">
     <p class="now-label">learning</p>
     <ul class="now-list" role="list">
-      <li> <em> Designing Data-Intensive Applications</em> — haven't started yet.</li>
+      <li> <em>Designing Data-Intensive Applications</em> (haven't started yet).</li>
       <li>AppSec deep-dive on auth and SSRF.</li>
       <li>PortSwigger Web Security Academy labs. ,  maybe ?</li>
     </ul>
@@ -1266,6 +1288,100 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
   </div>
 </section>
 
+<!-- ── Beruni project ─────────────────────────────────────────────────────── -->
+<section id="project-beruni" class="page" aria-label="Project: Beruni">
+  <header class="project-page-header">
+    <p class="eyebrow"><a href="#work">work</a> / Beruni</p>
+    <h1 class="project-hero">a read-only AWS security scanner that ranks findings by what can actually reach your data, not by raw severity.</h1>
+    <div class="project-meta-row">
+      <span><strong>role</strong>Co-founder · backend</span>
+      <span><strong>company</strong><a href="https://byteorb.org" class="a-accent" style="align-self:start" rel="noopener noreferrer">ByteOrb</a></span>
+      <span><strong>stage</strong>Closed beta · <a href="https://beruni.app" class="a-accent" style="align-self:start" rel="noopener noreferrer">beruni.app</a></span>
+      <span><strong>stack</strong>AWS · Python · STS · CloudFormation · JMESPath</span>
+    </div>
+    <p style="margin-top:16px;font-family:var(--ui);font-size:12px;color:var(--muted)">
+      Two engineers who couldn't justify a Wiz quote.
+    </p>
+  </header>
+
+  <div class="project-section">
+    <p class="project-section-label">the problem</p>
+    <p class="body-p">Most AWS breaches don't come from clever exploits. They come from a misconfiguration someone shipped on a Friday: a public S3 bucket, an over-permissioned IAM role, a security group open to the world. The tools that catch this (the enterprise CNAPP suites) start at quotes a ten-person startup can't sign.</p>
+    <p class="body-p">The cheaper scanners have the opposite problem. They dump a flat list sorted by CVSS severity, and you're left reading 200 "criticals" with no idea which three can actually be reached from the internet. Severity in isolation is noise.</p>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">how it works</p>
+    <img src="media/img/beruni/01-connect-aws.webp" alt="Beruni onboarding: deploy a CloudFormation read-only role to connect an AWS account" class="project-screenshot" style="aspect-ratio:2880/1636;object-fit:contain" loading="lazy">
+    <p class="body-p">You deploy one CloudFormation template in your AWS account. It creates a read-only IAM role with an ExternalId, scoped to AWS's <code>SecurityAudit</code> policy: <code>List*</code>, <code>Describe*</code>, <code>Get*</code> and nothing else. No write, no modify, no delete.</p>
+    <p class="body-p">Beruni's scanner calls <code>sts:AssumeRole</code> with your ExternalId. AWS hands back a short-lived session token, the scanner walks the resources it can read, and evaluates each against the rule library. Nothing is deployed inside your account beyond the role itself; the scan runs on our infrastructure. We never see access keys, only per-scan STS tokens that expire when the scan finishes. Rotating the ExternalId revokes us instantly.</p>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">the findings table</p>
+    <figure style="margin:0 0 12px">
+      <img src="media/img/beruni/02-findings.webp" alt="Beruni findings table: each finding scored 0 to 100 with severity, resource, region, and compliance mapping" loading="lazy" class="project-screenshot" style="aspect-ratio:2880/1636;object-fit:contain">
+      <figcaption class="ss-caption">every finding scored 0–100, sortable and filterable by any column</figcaption>
+    </figure>
+    <p class="body-p">Findings land in a table: severity, rule ID, resource, region, time, and a 0–100 risk score. The score is the point. It comes from a reachability and identity graph, so the findings that something can actually reach sort to the top, instead of a single account-wide grade that hides which of 200 findings matter.</p>
+    <p class="body-p">Every finding cites the control it traces to: CIS AWS Foundations, AWS FSBP, PCI DSS, GDPR. The table doubles as a compliance map, not just a bug list.</p>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">reachability &amp; attack paths</p>
+    <figure style="margin:0 0 12px">
+      <img src="media/img/beruni/beruni-attack-path.webp" alt="Beruni attack-path graph linking an internet-exposed instance to the role it assumes and the sensitive bucket that role can read" loading="lazy" class="project-screenshot" style="aspect-ratio:1856/978;object-fit:contain">
+      <figcaption class="ss-caption">the toxic path: internet-exposed instance → assumable role → readable bucket</figcaption>
+    </figure>
+    <p class="body-p">This is the part flat scanners skip. Beruni builds a graph of what can reach what, then pins the toxic combinations on top: an internet-exposed instance, the role it can assume, the sensitive bucket that role can read. One attack path, three findings that are each unremarkable alone.</p>
+    <p class="body-p">So the critical finding nothing can reach drops down the list, and the medium one sitting on a path to your data rises. You read fewer findings, in the right order.</p>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">a single finding</p>
+    <div class="ss-grid">
+      <figure style="margin:0">
+        <img src="media/img/beruni/03-finding-critical.webp" alt="A single Beruni finding with its severity, score, and the control it cites" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
+        <figcaption class="ss-caption">finding detail</figcaption>
+      </figure>
+      <figure style="margin:0">
+        <img src="media/img/beruni/beruni-s3-001-evidence.webp" alt="The raw AWS evidence behind a Beruni finding" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
+        <figcaption class="ss-caption">the raw evidence behind it</figcaption>
+      </figure>
+    </div>
+    <p class="body-p">Open any finding and you get the resource, the exact AWS field that tripped the rule, the controls it maps to, and the raw evidence the scan pulled. No black box: you can see why Beruni flagged it and check it against your own console.</p>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">scope</p>
+    <p class="body-p">IAM, S3, EC2, VPC, and RDS: five services where most AWS breaches happen, and roughly the entire stack a SaaS startup runs on day one. More services land as the beta runs.</p>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">the rule library is open</p>
+    <p class="body-p">Each check is one JSON file: the AWS field it inspects and the condition it expects, written in JMESPath, the same query language the AWS CLI uses. No proprietary DSL. Spot a check we're missing, open a PR and we'll merge it.</p>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">the lineage</p>
+    <p class="body-p">Beruni is my senior project, <a href="#project-intrasec" class="a-accent">IntraSec</a>, grown up. IntraSec scanned an internal network for vulnerabilities with no agent on any host. Beruni scans an AWS account for misconfigurations with nothing deployed but a read-only role. Same constraint (read-only, no agent, infer the risk from the outside) pointed at the cloud instead of the LAN, and shipped as a product instead of a thesis.</p>
+  </div>
+
+  <div class="project-section">
+    <p class="project-section-label">links</p>
+    <div class="project-links">
+      <a href="https://beruni.app" class="project-link-btn primary" target="_blank" rel="noopener noreferrer">visit beruni.app ↗</a>
+      <a href="media/pdf/beruni-datasheet.pdf" class="project-link-btn" target="_blank" rel="noopener noreferrer">datasheet (PDF) ↗</a>
+      <span class="project-link-btn" style="cursor:default;opacity:.6">console · invite-only beta</span>
+    </div>
+  </div>
+
+  <p style="margin-top:48px;font-family:var(--ui);font-size:13px;color:var(--muted)">
+    <a href="#work" class="a-accent">← all work</a>
+  </p>
+</section>
+
+<!-- ── IntraSec project ───────────────────────────────────────────────────── -->
 <section id="project-intrasec" class="page" aria-label="Project: IntraSec">
   <header class="project-page-header">
     <p class="eyebrow"><a href="#work">work</a> / IntraSec</p>
@@ -1283,8 +1399,8 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
 
   <div class="project-section">
     <p class="project-section-label">the problem</p>
-    <p class="body-p">Enterprise networks don't match their own inventories. Active Directory has stale records — decommissioned machines, unregistered hosts, ghost assets. A scanner that trusts the inventory misses these gaps.</p>
-    <p class="body-p">The constraint the project set itself was no agents. No agents means you can't just install software on each machine and ask it what's running. You have to figure it out from the outside — scanning, LDAP queries, remote sessions.</p>
+    <p class="body-p">Enterprise networks don't match their own inventories. Active Directory has stale records: decommissioned machines, unregistered hosts, ghost assets. A scanner that trusts the inventory misses these gaps.</p>
+    <p class="body-p">The constraint the project set itself was no agents. No agents means you can't just install software on each machine and ask it what's running. You have to figure it out from the outside: scanning, LDAP queries, remote sessions.</p>
   </div>
 
   <div class="project-section">
@@ -1292,11 +1408,11 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <img src="media/img/intrasec/arch-diagram.webp" alt="IntraSec microservices architecture diagram" class="project-screenshot diagram" loading="lazy">
     <p class="body-p">IntraSec is a Gateway API in front of five microservices. Each handles one thing. REST between them. Frontend is Next.js.</p>
     <ul style="font-family:var(--body);font-size:17px;line-height:1.8;margin-top:14px;padding-left:20px;list-style:disc;color:var(--text)">
-      <li><strong>Asset Discovery</strong> — Go service. Authenticates against LDAP, enumerates all AD-joined computers, opens PowerShell sessions on each to collect software inventory. Stores results in PostgreSQL.</li>
-      <li><strong>Risk Assessment</strong> — Python + FastAPI. Matches the software inventory against CVE/CPE data, runs the risk scoring algorithm, produces per-host and network-wide risk metrics.</li>
-      <li><strong>Vulnerability DB</strong> — Python service that ingests CVE and CPE data from NIST NVD into Elasticsearch. Keeps the local vulnerability index in sync with upstream feeds.</li>
-      <li><strong>Report Generation</strong> — Produces structured reports from risk assessment output, exportable for audits.</li>
-      <li><strong>Alerts</strong> — Real-time notifications for high-severity findings, with configurable thresholds.</li>
+      <li><strong>Asset Discovery</strong>: Go service. Authenticates against LDAP, enumerates all AD-joined computers, opens PowerShell sessions on each to collect software inventory. Stores results in PostgreSQL.</li>
+      <li><strong>Risk Assessment</strong>: Python + FastAPI. Matches the software inventory against CVE/CPE data, runs the risk scoring algorithm, produces per-host and network-wide risk metrics.</li>
+      <li><strong>Vulnerability DB</strong>: Python service that ingests CVE and CPE data from NIST NVD into Elasticsearch. Keeps the local vulnerability index in sync with upstream feeds.</li>
+      <li><strong>Report Generation</strong>: Produces structured reports from risk assessment output, exportable for audits.</li>
+      <li><strong>Alerts</strong>: Real-time notifications for high-severity findings, with configurable thresholds.</li>
     </ul>
     <p class="body-p" style="margin-top:16px">Redis for caching. PostgreSQL for assets, patches, reports. Elasticsearch for CVE/CPE because you need to search millions of records fast.</p>
   </div>
@@ -1309,7 +1425,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
   <div class="project-section">
     <p class="project-section-label">how discovery works</p>
     <p class="body-p">The Go service authenticates to LDAP, queries for all computer objects, then opens a PowerShell remote session on each to collect software, services, and open ports. Results go into PostgreSQL and downstream to risk assessment.</p>
-    <p class="body-p">If a host returns no data, it's not that nothing is installed — it means the host is offline, unreachable, has remoting disabled, or the credentials don't have access. That's flagged separately.</p>
+    <p class="body-p">If a host returns no data, it's not that nothing is installed: it means the host is offline, unreachable, has remoting disabled, or the credentials don't have access. That's flagged separately.</p>
     <p class="body-p">Go for this because handling hundreds of concurrent LDAP queries and PowerShell sessions needs proper concurrency primitives. Python for the risk scoring because the math libraries are there.</p>
   </div>
 
@@ -1317,10 +1433,10 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <p class="project-section-label">risk scoring</p>
     <p class="body-p">Risk scoring is based on the Reyes et al. [2022] model. For each host, the algorithm calculates a probability of occurrence (PO) factoring in:</p>
     <ul style="font-family:var(--body);font-size:17px;line-height:1.8;margin-top:14px;padding-left:20px;list-style:disc;color:var(--text)">
-      <li><strong>POE</strong> — probability of exploit, weighted by how many CVEs affect this host vs. the network total</li>
-      <li><strong>POP</strong> — probability of port exploitation, proportional to open ports</li>
-      <li><strong>AVT</strong> — network-wide age-weighted vulnerability time: older unpatched CVEs score higher</li>
-      <li><strong>CVSS impact score</strong> — the severity multiplier from NIST</li>
+      <li><strong>POE</strong>: probability of exploit, weighted by how many CVEs affect this host vs. the network total</li>
+      <li><strong>POP</strong>: probability of port exploitation, proportional to open ports</li>
+      <li><strong>AVT</strong>: network-wide age-weighted vulnerability time, where older unpatched CVEs score higher</li>
+      <li><strong>CVSS impact score</strong>: the severity multiplier from NIST</li>
     </ul>
     <p class="body-p" style="margin-top:16px">Final risk factor: <code>risk = PO × avg_impact</code>, where <code>PO = ((avg_TR + avg_EP) / 2) × ((POE + POP) / 2) × AVT</code>. Hosts are then bucketed into LOW / MEDIUM-LOW / MEDIUM / MEDIUM-HIGH / HIGH.</p>
   </div>
@@ -1329,10 +1445,10 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <p class="project-section-label">external intelligence</p>
     <p class="body-p">The vulnerability database is fed from four APIs to get a complete picture of each CVE:</p>
     <ul style="font-family:var(--body);font-size:17px;line-height:1.8;margin-top:14px;padding-left:20px;list-style:disc;color:var(--text)">
-      <li><strong>NIST NVD</strong> — authoritative CVE and CPE data, CVSS scores</li>
-      <li><strong>FIRST.org EPSS</strong> — exploit prediction scores: probability a CVE gets exploited in the wild</li>
-      <li><strong>CISA KEV</strong> — known exploited vulnerabilities catalog, actively exploited in the wild</li>
-      <li><strong>VulnCheck</strong> — enriched CVE intelligence including ransomware associations</li>
+      <li><strong>NIST NVD</strong>: authoritative CVE and CPE data, CVSS scores</li>
+      <li><strong>FIRST.org EPSS</strong>: exploit prediction scores, the probability a CVE gets exploited in the wild</li>
+      <li><strong>CISA KEV</strong>: known exploited vulnerabilities catalog, actively exploited in the wild</li>
+      <li><strong>VulnCheck</strong>: enriched CVE intelligence including ransomware associations</li>
     </ul>
   </div>
 
@@ -1354,7 +1470,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <p class="project-section-label">the interface</p>
     <figure style="margin:0 0 12px">
       <img src="media/img/intrasec/ss-risk-graph.webp" alt="IntraSec network risk graph visualization" loading="lazy" class="project-screenshot" style="aspect-ratio:auto;object-fit:contain">
-      <figcaption class="ss-caption">network risk graph — each node is a host, edges show exposure relationships</figcaption>
+      <figcaption class="ss-caption">network risk graph: each node is a host, edges show exposure relationships</figcaption>
     </figure>
     <div class="ss-grid">
       <figure style="margin:0">
@@ -1388,7 +1504,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <p class="project-section-label">what i'd do differently</p>
     <p class="body-p">Scan operations are currently request-response via REST. A message queue (RabbitMQ, Kafka) would let scans run async without polling for status. Right now we're building status tracking on top of HTTP.</p>
     <p class="body-p">PowerShell remoting is the first choice but fragile. A fallback chain would help: WMI if remoting fails, SNMP if that fails, passive fingerprinting as last resort. We'd catch more hosts at the cost of more code paths.</p>
-    <p class="body-p">Logging came late. Should have added distributed tracing from the start — hard to debug why a scan hit a 10-minute timeout without traces across service boundaries.</p>
+    <p class="body-p">Logging came late. Should have added distributed tracing from the start: hard to debug why a scan hit a 10-minute timeout without traces across service boundaries.</p>
   </div>
 
   <div class="project-section">
@@ -1396,7 +1512,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
     <div class="project-links">
       <a href="#writing-intrasec" class="project-link-btn primary">read the writeup →</a>
       <a href="media/pdf/intrasec.pdf" class="project-link-btn" target="_blank" rel="noopener noreferrer">project report (PDF) ↗</a>
-      <span class="project-link-btn" style="cursor:default;opacity:.6">github — not public yet</span>
+      <span class="project-link-btn" style="cursor:default;opacity:.6">github · not public yet</span>
     </div>
   </div>
 
@@ -1427,12 +1543,25 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
 
     <div class="cv-entry">
       <div class="cv-entry-head">
+        <span class="cv-org">ByteOrb · Beruni</span>
+        <span class="cv-date">present</span>
+      </div>
+      <p class="cv-role">Co-founder / Backend Engineer</p>
+      <ul class="cv-bullets">
+        <li>Building Beruni, a read-only AWS cloud security posture scanner for startups: connects via a CloudFormation IAM role and STS AssumeRole, evaluating IAM, S3, EC2, VPC, and RDS against a JSON/JMESPath rule library.</li>
+        <li>Ranks findings 0–100 by reachability and attack path rather than raw severity; maps each finding to CIS AWS Foundations, AWS FSBP, PCI DSS, and GDPR controls.</li>
+        <li>Read-only by design: scoped to the SecurityAudit policy, per-scan short-lived STS tokens, customer-rotatable ExternalId. Currently in closed beta.</li>
+      </ul>
+    </div>
+
+    <div class="cv-entry">
+      <div class="cv-entry-head">
         <span class="cv-org">SageTeck</span>
         <span class="cv-date">2025 – present</span>
       </div>
       <p class="cv-role">Full Stack Developer</p>
       <ul class="cv-bullets">
-        <li>Backend systems on a multi-tenant hospitality SaaS platform on Azure — authentication, service orchestration, deployment pipelines across distributed services.</li>
+        <li>Backend systems on a multi-tenant hospitality SaaS platform on Azure: authentication, service orchestration, deployment pipelines across distributed services.</li>
         <li>Tenant-isolated data flows, inter-service REST APIs, and role-based access controls across multiple enterprise CRM products.</li>
         <li>SuiteCRM v7 &amp; v8 customisations: custom logic hooks, scheduler jobs, module development, MySQL schema design and migrations.</li>
       </ul>
@@ -1467,7 +1596,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
         <span class="cv-org">FAST-NUCES</span>
         <span class="cv-date">2021 – 2022</span>
       </div>
-      <p class="cv-role">Teaching Assistant — Data Structures</p>
+      <p class="cv-role">Teaching Assistant, Data Structures</p>
       <ul class="cv-bullets">
         <li>Conducted lab sessions, marked assignments, and supported students in DS fundamentals.</li>
       </ul>
@@ -1495,7 +1624,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
       <p class="cv-role">BS Computer Science</p>
       <ul class="cv-bullets">
         <li>Dean's Honor List.</li>
-        <li>Senior project: IntraSec — client-less network vulnerability scanner in Python &amp; Go, supervised by Dr. Muhammad Asim, HOD of Cyber Security.</li>
+        <li>Senior project: IntraSec, a client-less network vulnerability scanner in Python &amp; Go, supervised by Dr. Muhammad Asim, HOD of Cyber Security.</li>
       </ul>
     </div>
   </div>
@@ -1508,7 +1637,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
       <span class="cv-skill-label">Frameworks</span>
       <span>FastAPI · Flask · Django · CodeIgniter · SuiteCRM</span>
       <span class="cv-skill-label">Infrastructure</span>
-      <span>Docker · Nginx · Azure · CI/CD · Kafka · Redis · ElasticSearch</span>
+      <span>AWS · Azure · Docker · Nginx · CI/CD · Kafka · Redis · ElasticSearch</span>
       <span class="cv-skill-label">Data</span>
       <span>MySQL · PostgreSQL · MSSQL · MongoDB</span>
       <span class="cv-skill-label">Tools</span>
@@ -1559,7 +1688,7 @@ img.project-screenshot, .ss-grid img { cursor: zoom-in; }
       </div>
       <div class="uses-item">
         <p class="uses-name">Go</p>
-        <p class="uses-desc">network code, anything concurrent. wrote the discovery worker in IntraSec in Go — right choice.</p>
+        <p class="uses-desc">network code, anything concurrent. wrote the discovery worker in IntraSec in Go. Right choice.</p>
       </div>
       <div class="uses-item">
         <p class="uses-name">PHP + CodeIgniter + SuiteCRM</p>
