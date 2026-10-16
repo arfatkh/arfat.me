@@ -40,12 +40,11 @@ test("count of aria-current occurrences == 1 for every nav route", () => {
   }
 });
 
-test("stamps first link only when href repeats (e.g. wordmark + home both /)", () => {
+test("home stamps the nav-links 'home' link, not the wordmark (both href /)", () => {
   const out = stampAriaCurrent(nav, "/");
-  // Two "/" links exist (wordmark, home); only the first is stamped.
   assert.equal(countAriaCurrent(out), 1);
-  const firstIdx = out.indexOf('<a href="/" aria-current="page" class="wordmark"');
-  assert.ok(firstIdx !== -1, "first matching link (wordmark) is the one stamped");
+  assert.ok(out.includes('<li><a href="/" aria-current="page">home</a></li>'), "the home link is stamped");
+  assert.ok(out.includes('<a href="/" class="wordmark">'), "the wordmark is left alone");
 });
 
 test("output contains no script — pure HTML stamping, no JS", () => {

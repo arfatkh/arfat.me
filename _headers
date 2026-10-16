@@ -32,3 +32,11 @@
 
 /media/pdf/*
   Cache-Control: public, max-age=86400
+
+# Keep the pages.dev copies (production alias + per-deploy previews) out of
+# search results; arfat.me is the canonical host.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex

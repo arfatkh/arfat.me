@@ -4,6 +4,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -212,7 +213,13 @@ export function validateNoUnresolvedSlots(html, route) {
  */
 export function stampAriaCurrent(navHtml, currentPath) {
   const needle = `<a href="${currentPath}"`;
-  return navHtml.replace(needle, `<a href="${currentPath}" aria-current="page"`);
+  // Only stamp inside the links list: the wordmark also points at "/", and
+  // stamping it would leave the "home" link without its active underline.
+  const listStart = navHtml.indexOf('class="nav-links"');
+  const from = listStart === -1 ? 0 : listStart;
+  const at = navHtml.indexOf(needle, from);
+  if (at === -1) return navHtml;
+  return navHtml.slice(0, at) + `<a href="${currentPath}" aria-current="page"` + navHtml.slice(at + needle.length);
 }
 
 /**
@@ -299,12 +306,35 @@ export function renderPage(route, layout, partials, content) {
 }
 
 /**
+ * YYYY-MM-DD of a file's last commit (author date, which rebases keep), so sitemap dates only move when a page
+ * actually changes (file mtimes reset on every clone/checkout, which makes
+ * search engines distrust lastmod). Falls back to the mtime when git isn't
+ * available or the file has no commits yet.
+ *
+ * @param {string} file  Absolute path of the page fragment.
+ * @returns {string}
+ */
+export function lastModified(file) {
+  try {
+    const date = execFileSync("git", ["log", "-1", "--format=%as", "--", file], {
+      cwd: __dirname,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
+  } catch {
+    // git missing or not a repository: use the file time below.
+  }
+  return fs.statSync(file).mtime.toISOString().slice(0, 10);
+}
+
+/**
  * Generate the sitemap.xml document string from the route manifest.
  *
  * One `<url>` entry per route (so every route appears exactly once as a
  * `<loc>`). For each route: `<loc>` is the route's canonical; `<lastmod>` is the
  * route's explicit `lastmod` if present, otherwise the YYYY-MM-DD date derived
- * from the mtime of `src/pages/{id}.html`; `<changefreq>` defaults to "monthly";
+ * from the last git commit of `src/pages/{id}.html` (see lastModified); `<changefreq>` defaults to "monthly";
  * `<priority>` is the route's priority.
  *
  * @param {Array<object>} routes  The parsed routes.json array.
@@ -316,11 +346,7 @@ export function generateSitemap(routes) {
 
   for (const route of routes) {
     const lastmod =
-      route.lastmod ||
-      fs
-        .statSync(path.join(SRC_DIR, "pages", `${route.id}.html`))
-        .mtime.toISOString()
-        .slice(0, 10);
+      route.lastmod || lastModified(path.join(SRC_DIR, "pages", `${route.id}.html`));
     const changefreq = route.changefreq || "monthly";
 
     out += "  <url>\n";

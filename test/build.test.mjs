@@ -213,6 +213,8 @@ test("Property P5: each route output has exactly one aria-current=\"page\"", () 
     // Leading whitespace = an attribute on a tag; the inlined CSS selector
     // `a[aria-current="page"]` is preceded by "[" and must not be counted.
     const count = (html.match(/\saria-current="page"/g) || []).length;
+    // The wordmark also links to "/"; it must never take the active state.
+    assert.ok(!/<a\b[^>]*aria-current="page"[^>]*class="wordmark"/.test(html), `route ${route.path} stamped the wordmark`);
     assert.equal(
       count,
       1,
@@ -375,4 +377,25 @@ test("every page has a skip link target and fully dimensioned images", () => {
   }
   const home = readDist("/");
   assert.ok(home.includes("<title>Muhammad Arfat — Backend &amp; secure systems</title>"), "& in titles is escaped");
+});
+
+// Sitemap dates come from each page's last commit, not file mtimes (which
+// reset on every clone and make search engines ignore lastmod).
+test("sitemap lastmod matches each page's last git commit date", async (t) => {
+  const { execFileSync } = await import("node:child_process");
+  const sitemap = fs.readFileSync(path.join(DIST_DIR, "sitemap.xml"), "utf8");
+  for (const route of routes) {
+    if (route.lastmod) continue;
+    const file = path.join(SRC_DIR, "pages", `${route.id}.html`);
+    let expected;
+    try {
+      expected = execFileSync("git", ["log", "-1", "--format=%as", "--", file], { cwd: ROOT_DIR, encoding: "utf8" }).trim();
+    } catch {
+      t.skip("git not available");
+      return;
+    }
+    if (!expected) continue; // uncommitted new page falls back to mtime
+    const m = sitemap.match(new RegExp(`<loc>${route.canonical.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}</loc>\\s*<lastmod>([^<]+)</lastmod>`));
+    assert.equal(m && m[1], expected, `${route.path} lastmod`);
+  }
 });

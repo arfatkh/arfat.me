@@ -256,14 +256,16 @@ main {
   line-height: 1.25;
   font-weight: 400;
   letter-spacing: -0.012em;
-  max-width: 22ch;
+  max-width: 28ch;
   margin: 0;
   color: var(--text);
   border-left: 3px solid var(--accent);
   padding-left: 20px;
   margin-left: -23px;
 }
-.home-prose { margin-top: 18px; max-width: 50ch; }
+/* One block per sentence, each balanced on its own (no orphaned words). */
+.home-h1 > span { display: block; text-wrap: balance; }
+.home-prose { margin-top: 18px; max-width: 64ch; }
 .home-status { margin-top: 20px; font-family: var(--mono); font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
 .home-prose p { font-family: var(--body); font-size: 17px; line-height: 1.7; color: var(--text); }
 .home-prose p + p { margin-top: 12px; }
