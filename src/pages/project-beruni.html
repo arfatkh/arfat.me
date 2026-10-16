@@ -4,8 +4,8 @@
     <h1 class="project-hero">a read-only AWS security scanner that ranks findings by what can actually reach your data, not by raw severity.</h1>
     <div class="project-meta-row">
       <span><strong>role</strong>Co-founder · backend</span>
-      <span><strong>company</strong><a href="https://byteorb.org" class="a-accent" style="align-self:start" rel="noopener noreferrer">ByteOrb</a></span>
-      <span><strong>stage</strong>Closed beta · <a href="https://beruni.app" class="a-accent" style="align-self:start" rel="noopener noreferrer">beruni.app</a></span>
+      <span><strong>company</strong><a target="_blank" href="https://byteorb.org" class="a-accent" style="align-self:start" rel="noopener noreferrer">ByteOrb</a></span>
+      <span><strong>stage</strong>Closed beta · <a target="_blank" href="https://beruni.app" class="a-accent" style="align-self:start" rel="noopener noreferrer">beruni.app</a></span>
       <span><strong>stack</strong>AWS · Python · STS · CloudFormation · JMESPath</span>
     </div>
     <p style="margin-top:16px;font-family:var(--ui);font-size:12px;color:var(--muted)">
@@ -15,7 +15,7 @@
 
   <div class="project-section">
     <p class="project-section-label">the problem</p>
-    <p class="body-p">Most AWS breaches don't come from clever exploits. They come from a misconfiguration someone shipped on a Friday: a public S3 bucket, an over-permissioned IAM role, a security group open to the world. The tools that catch this — the enterprise CNAPP suites — start at quotes a ten-person startup can't sign.</p>
+    <p class="body-p">Most AWS breaches don't come from clever exploits. They come from a misconfiguration someone shipped on a Friday: a public S3 bucket, an over-permissioned IAM role, a security group open to the world. The tools that catch this (the enterprise CNAPP suites) start at quotes a ten-person startup can't sign.</p>
     <p class="body-p">The cheaper scanners have the opposite problem. They dump a flat list sorted by CVSS severity, and you're left reading 200 "criticals" with no idea which three can actually be reached from the internet. Severity in isolation is noise.</p>
   </div>
 
@@ -50,11 +50,11 @@
     <p class="project-section-label">a single finding</p>
     <div class="ss-grid">
       <figure style="margin:0">
-        <img src="/media/img/beruni/03-finding-critical.webp" alt="A single Beruni finding with its severity, score, and the control it cites" loading="lazy">
+        <img src="/media/img/beruni/03-finding-critical.webp" alt="A single Beruni finding with its severity, score, and the control it cites" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
         <figcaption class="ss-caption">finding detail</figcaption>
       </figure>
       <figure style="margin:0">
-        <img src="/media/img/beruni/beruni-s3-001-evidence.webp" alt="The raw AWS evidence behind a Beruni finding" loading="lazy">
+        <img src="/media/img/beruni/beruni-s3-001-evidence.webp" alt="The raw AWS evidence behind a Beruni finding" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
         <figcaption class="ss-caption">the raw evidence behind it</figcaption>
       </figure>
     </div>
@@ -63,17 +63,17 @@
 
   <div class="project-section">
     <p class="project-section-label">scope</p>
-    <p class="body-p">IAM, S3, EC2, VPC, and RDS — five services where most AWS breaches happen, and roughly the entire stack a SaaS startup runs on day one. More services land as the beta runs.</p>
+    <p class="body-p">IAM, S3, EC2, VPC, and RDS: five services where most AWS breaches happen, and roughly the entire stack a SaaS startup runs on day one. More services land as the beta runs.</p>
   </div>
 
   <div class="project-section">
-    <p class="project-section-label">the rule library is open</p>
-    <p class="body-p">Each check is one JSON file: the AWS field it inspects and the condition it expects, written in JMESPath, the same query language the AWS CLI uses. No proprietary DSL. Spot a check we're missing, open a PR and we'll merge it.</p>
+    <p class="project-section-label">rules are plain JSON</p>
+    <p class="body-p">Each check is one JSON file: the AWS field it inspects and the condition it expects, written in JMESPath, the same query language the AWS CLI uses. No proprietary DSL.</p>
   </div>
 
   <div class="project-section">
     <p class="project-section-label">the lineage</p>
-    <p class="body-p">Beruni is my senior project, <a href="/projects/intrasec/" class="a-accent">IntraSec</a>, grown up. IntraSec scanned an internal network for vulnerabilities with no agent on any host. Beruni scans an AWS account for misconfigurations with nothing deployed but a read-only role. Same constraint — read-only, no agent, infer the risk from the outside — pointed at the cloud instead of the LAN, and shipped as a product instead of a thesis.</p>
+    <p class="body-p">Beruni is my senior project, <a href="/projects/intrasec/" class="a-accent">IntraSec</a>, grown up. IntraSec scanned an internal network for vulnerabilities with no agent on any host. Beruni scans an AWS account for misconfigurations with nothing deployed but a read-only role. Same constraint (read-only, no agent, infer the risk from the outside) pointed at the cloud instead of the LAN, and shipped as a product instead of a thesis.</p>
   </div>
 
   <div class="project-section">
@@ -81,7 +81,7 @@
     <div class="project-links">
       <a href="https://beruni.app" class="project-link-btn primary" target="_blank" rel="noopener noreferrer">visit beruni.app ↗</a>
       <a href="/media/pdf/beruni-datasheet.pdf" class="project-link-btn" target="_blank" rel="noopener noreferrer">datasheet (PDF) ↗</a>
-      <span class="project-link-btn" style="cursor:default;opacity:.6">console — invite-only beta</span>
+      <span class="project-link-btn" style="cursor:default;opacity:.6">console · invite-only beta</span>
     </div>
   </div>
 

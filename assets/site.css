@@ -13,43 +13,36 @@
 .nav-wrapper { view-transition-name: site-nav; }
 main         { view-transition-name: page-content; }
 
-/* Tune the cross-document transition timing. Kept short so the fade reads as
-   crisp — on a live host the perceived nav time is this animation PLUS the HTML
-   fetch latency, so a long fade compounds with network lag. */
-:root { --vt-dur: .28s; --vt-ease: cubic-bezier(.22, .61, .36, 1); }
-
-/* The whole-page root snapshot: a gentle, quick crossfade underneath the
-   page-content animation so backgrounds/footer don't hard-cut. */
+/* Mirror the old single-file site: the old page disappears instantly, the
+   rest of the chrome hard-cuts, and only the new content rises in with the
+   same .4s fadeUp the hash router used. No fade-out phase, so nothing delays
+   the new page appearing. */
 ::view-transition-old(root),
-::view-transition-new(root) { animation-duration: var(--vt-dur); }
-
-/* Keep the nav perfectly still — no flicker on the sticky bar. */
 ::view-transition-old(site-nav),
+::view-transition-old(page-content) { animation: none; opacity: 0; }
+
+::view-transition-new(root),
 ::view-transition-new(site-nav) { animation: none; mix-blend-mode: normal; }
 
-@keyframes vtContentOut {
-  from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(-5px); }
-}
+/* Swap the content box to its new size immediately instead of morphing. */
+::view-transition-group(page-content) { animation: none; }
+
 @keyframes vtContentIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
-/* Both sides animate and overlap → a true crossfade, not a hard cut.
-   Old lifts + fades out fast; new rises + fades in just behind it. */
-::view-transition-old(page-content) {
-  animation: vtContentOut .18s var(--vt-ease) both;
-}
 ::view-transition-new(page-content) {
-  animation: vtContentIn var(--vt-dur) var(--vt-ease) .04s both;
+  animation: vtContentIn .4s ease both;
+  mix-blend-mode: normal;
 }
+
+/* The same fadeUp for in-page router swaps (swup), which don't use View
+   Transitions; the rules above only cover full page loads. */
+main.swap-in { animation: vtContentIn .4s ease both; }
 
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root),
-  ::view-transition-old(page-content),
-  ::view-transition-new(page-content) { animation: none; }
+  ::view-transition-new(page-content),
+  main.swap-in { animation: none; }
 }
 
 /* ── Tokens ──────────────────────────────────────────────────────────────── */

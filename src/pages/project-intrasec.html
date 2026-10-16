@@ -6,17 +6,17 @@
       <span><strong>role</strong>Senior project · FAST-NUCES</span>
       <span><strong>year</strong>2024 – 2025</span>
       <span><strong>stack</strong>Next.js · Go · Python · FastAPI · Elasticsearch · PostgreSQL · Redis</span>
-      <span><strong>supervisor</strong><a href="https://www.isb.nu.edu.pk/Profile.php?id=5099" class="a-accent" style="align-self:start" rel="noopener noreferrer">Dr. Muhammad Asim</a> · HOD, Cyber Security</span>
+      <span><strong>supervisor</strong><a target="_blank" href="https://www.isb.nu.edu.pk/Profile.php?id=5099" class="a-accent" style="align-self:start" rel="noopener noreferrer">Dr. Muhammad Asim</a> · HOD, Cyber Security</span>
     </div>
     <p style="margin-top:16px;font-family:var(--ui);font-size:12px;color:var(--muted)">
-      Built with <a href="https://github.com/AhmadHanif12" class="a-accent" rel="noopener noreferrer">Muhammad Ahmad Hanif</a>
+      Built with <a target="_blank" href="https://github.com/AhmadHanif12" class="a-accent" rel="noopener noreferrer">Muhammad Ahmad Hanif</a>
     </p>
   </header>
 
   <div class="project-section">
     <p class="project-section-label">the problem</p>
-    <p class="body-p">Enterprise networks don't match their own inventories. Active Directory has stale records — decommissioned machines, unregistered hosts, ghost assets. A scanner that trusts the inventory misses these gaps.</p>
-    <p class="body-p">The constraint the project set itself was no agents. No agents means you can't just install software on each machine and ask it what's running. You have to figure it out from the outside — scanning, LDAP queries, remote sessions.</p>
+    <p class="body-p">Enterprise networks don't match their own inventories. Active Directory has stale records: decommissioned machines, unregistered hosts, ghost assets. A scanner that trusts the inventory misses these gaps.</p>
+    <p class="body-p">The constraint the project set itself was no agents. No agents means you can't just install software on each machine and ask it what's running. You have to figure it out from the outside: scanning, LDAP queries, remote sessions.</p>
   </div>
 
   <div class="project-section">
@@ -24,11 +24,11 @@
     <img src="/media/img/intrasec/arch-diagram.webp" alt="IntraSec microservices architecture diagram" class="project-screenshot diagram" loading="lazy">
     <p class="body-p">IntraSec is a Gateway API in front of five microservices. Each handles one thing. REST between them. Frontend is Next.js.</p>
     <ul style="font-family:var(--body);font-size:17px;line-height:1.8;margin-top:14px;padding-left:20px;list-style:disc;color:var(--text)">
-      <li><strong>Asset Discovery</strong> — Go service. Authenticates against LDAP, enumerates all AD-joined computers, opens PowerShell sessions on each to collect software inventory. Stores results in PostgreSQL.</li>
-      <li><strong>Risk Assessment</strong> — Python + FastAPI. Matches the software inventory against CVE/CPE data, runs the risk scoring algorithm, produces per-host and network-wide risk metrics.</li>
-      <li><strong>Vulnerability DB</strong> — Python service that ingests CVE and CPE data from NIST NVD into Elasticsearch. Keeps the local vulnerability index in sync with upstream feeds.</li>
-      <li><strong>Report Generation</strong> — Produces structured reports from risk assessment output, exportable for audits.</li>
-      <li><strong>Alerts</strong> — Real-time notifications for high-severity findings, with configurable thresholds.</li>
+      <li><strong>Asset Discovery</strong>: Go service. Authenticates against LDAP, enumerates all AD-joined computers, opens PowerShell sessions on each to collect software inventory. Stores results in PostgreSQL.</li>
+      <li><strong>Risk Assessment</strong>: Python + FastAPI. Matches the software inventory against CVE/CPE data, runs the risk scoring algorithm, produces per-host and network-wide risk metrics.</li>
+      <li><strong>Vulnerability DB</strong>: Python service that ingests CVE and CPE data from NIST NVD into Elasticsearch. Keeps the local vulnerability index in sync with upstream feeds.</li>
+      <li><strong>Report Generation</strong>: Produces structured reports from risk assessment output, exportable for audits.</li>
+      <li><strong>Alerts</strong>: Real-time notifications for high-severity findings, with configurable thresholds.</li>
     </ul>
     <p class="body-p" style="margin-top:16px">Redis for caching. PostgreSQL for assets, patches, reports. Elasticsearch for CVE/CPE because you need to search millions of records fast.</p>
   </div>
@@ -41,7 +41,7 @@
   <div class="project-section">
     <p class="project-section-label">how discovery works</p>
     <p class="body-p">The Go service authenticates to LDAP, queries for all computer objects, then opens a PowerShell remote session on each to collect software, services, and open ports. Results go into PostgreSQL and downstream to risk assessment.</p>
-    <p class="body-p">If a host returns no data, it's not that nothing is installed — it means the host is offline, unreachable, has remoting disabled, or the credentials don't have access. That's flagged separately.</p>
+    <p class="body-p">If a host returns no data, it's not that nothing is installed: it means the host is offline, unreachable, has remoting disabled, or the credentials don't have access. That's flagged separately.</p>
     <p class="body-p">Go for this because handling hundreds of concurrent LDAP queries and PowerShell sessions needs proper concurrency primitives. Python for the risk scoring because the math libraries are there.</p>
   </div>
 
@@ -49,10 +49,10 @@
     <p class="project-section-label">risk scoring</p>
     <p class="body-p">Risk scoring is based on the Reyes et al. [2022] model. For each host, the algorithm calculates a probability of occurrence (PO) factoring in:</p>
     <ul style="font-family:var(--body);font-size:17px;line-height:1.8;margin-top:14px;padding-left:20px;list-style:disc;color:var(--text)">
-      <li><strong>POE</strong> — probability of exploit, weighted by how many CVEs affect this host vs. the network total</li>
-      <li><strong>POP</strong> — probability of port exploitation, proportional to open ports</li>
-      <li><strong>AVT</strong> — network-wide age-weighted vulnerability time: older unpatched CVEs score higher</li>
-      <li><strong>CVSS impact score</strong> — the severity multiplier from NIST</li>
+      <li><strong>POE</strong>: probability of exploit, weighted by how many CVEs affect this host vs. the network total</li>
+      <li><strong>POP</strong>: probability of port exploitation, proportional to open ports</li>
+      <li><strong>AVT</strong>: network-wide age-weighted vulnerability time, where older unpatched CVEs score higher</li>
+      <li><strong>CVSS impact score</strong>: the severity multiplier from NIST</li>
     </ul>
     <p class="body-p" style="margin-top:16px">Final risk factor: <code>risk = PO × avg_impact</code>, where <code>PO = ((avg_TR + avg_EP) / 2) × ((POE + POP) / 2) × AVT</code>. Hosts are then bucketed into LOW / MEDIUM-LOW / MEDIUM / MEDIUM-HIGH / HIGH.</p>
   </div>
@@ -61,10 +61,10 @@
     <p class="project-section-label">external intelligence</p>
     <p class="body-p">The vulnerability database is fed from four APIs to get a complete picture of each CVE:</p>
     <ul style="font-family:var(--body);font-size:17px;line-height:1.8;margin-top:14px;padding-left:20px;list-style:disc;color:var(--text)">
-      <li><strong>NIST NVD</strong> — authoritative CVE and CPE data, CVSS scores</li>
-      <li><strong>FIRST.org EPSS</strong> — exploit prediction scores: probability a CVE gets exploited in the wild</li>
-      <li><strong>CISA KEV</strong> — known exploited vulnerabilities catalog, actively exploited in the wild</li>
-      <li><strong>VulnCheck</strong> — enriched CVE intelligence including ransomware associations</li>
+      <li><strong>NIST NVD</strong>: authoritative CVE and CPE data, CVSS scores</li>
+      <li><strong>FIRST.org EPSS</strong>: exploit prediction scores, the probability a CVE gets exploited in the wild</li>
+      <li><strong>CISA KEV</strong>: known exploited vulnerabilities catalog, actively exploited in the wild</li>
+      <li><strong>VulnCheck</strong>: enriched CVE intelligence including ransomware associations</li>
     </ul>
   </div>
 
@@ -86,7 +86,7 @@
     <p class="project-section-label">the interface</p>
     <figure style="margin:0 0 12px">
       <img src="/media/img/intrasec/ss-risk-graph.webp" alt="IntraSec network risk graph visualization" loading="lazy" class="project-screenshot" style="aspect-ratio:auto;object-fit:contain">
-      <figcaption class="ss-caption">network risk graph — each node is a host, edges show exposure relationships</figcaption>
+      <figcaption class="ss-caption">network risk graph: each node is a host, edges show exposure relationships</figcaption>
     </figure>
     <div class="ss-grid">
       <figure style="margin:0">
@@ -120,7 +120,7 @@
     <p class="project-section-label">what i'd do differently</p>
     <p class="body-p">Scan operations are currently request-response via REST. A message queue (RabbitMQ, Kafka) would let scans run async without polling for status. Right now we're building status tracking on top of HTTP.</p>
     <p class="body-p">PowerShell remoting is the first choice but fragile. A fallback chain would help: WMI if remoting fails, SNMP if that fails, passive fingerprinting as last resort. We'd catch more hosts at the cost of more code paths.</p>
-    <p class="body-p">Logging came late. Should have added distributed tracing from the start — hard to debug why a scan hit a 10-minute timeout without traces across service boundaries.</p>
+    <p class="body-p">Logging came late. Should have added distributed tracing from the start: hard to debug why a scan hit a 10-minute timeout without traces across service boundaries.</p>
   </div>
 
   <div class="project-section">
@@ -128,7 +128,7 @@
     <div class="project-links">
       <a href="/writing/intrasec/" class="project-link-btn primary">read the writeup →</a>
       <a href="/media/pdf/intrasec.pdf" class="project-link-btn" target="_blank" rel="noopener noreferrer">project report (PDF) ↗</a>
-      <span class="project-link-btn" style="cursor:default;opacity:.6">github — not public yet</span>
+      <span class="project-link-btn" style="cursor:default;opacity:.6">github · not public yet</span>
     </div>
   </div>
 

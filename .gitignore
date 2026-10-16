@@ -1,1 +1,8 @@
 content/
+dist/
+.wrangler/
+.kiro/
+.vscode/
+PRODUCT.md
+DESIGN.md
+.impeccable/

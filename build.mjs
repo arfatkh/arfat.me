@@ -3,6 +3,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createHash } from "node:crypto";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -331,6 +332,7 @@ export function generateSitemap(routes) {
  *                               and cv.pdf at media/pdf/cv.pdf)
  *   - _headers    → dist/_headers     (CSP-adjacent security + cache headers)
  *   - robots.txt  → dist/robots.txt
+ *   - og.png      → dist/og.png       (social card, see og/)
  *
  * Deliberately does NOT emit a `_redirects` SPA fallback rule: real files exist
  * at every route in an MPA, so no `/* /index.html 200` fallback is needed (and
@@ -351,7 +353,7 @@ export function copyPassthrough() {
   }
 
   // Top-level files copied verbatim.
-  const files = ["_headers", "robots.txt"];
+  const files = ["_headers", "robots.txt", "og.png"];
   for (const file of files) {
     const src = path.join(__dirname, file);
     if (fs.existsSync(src)) {
@@ -392,12 +394,43 @@ export function emit404(layout, partials) {
     path.join(SRC_DIR, "pages", "404.html"),
     "utf8"
   );
-  const html = renderPage(notFoundRoute, layout, partials, content);
+  // Served at whatever URL was missing, so it has no canonical URL of its own;
+  // drop canonical + og:url and keep it out of search indexes.
+  const html = renderPage(notFoundRoute, layout, partials, content)
+    .replace(/<link rel="canonical"[^>]*>\n?/, "")
+    .replace(/<meta property="og:url"[^>]*>\n?/, "")
+    .replace("</title>", '</title>\n<meta name="robots" content="noindex">');
 
   validateAssetPaths(html, notFoundRoute);
   validateNoUnresolvedSlots(html, notFoundRoute);
 
   fs.writeFileSync(path.join(DIST_DIR, "404.html"), html);
+}
+
+/**
+ * Vendored swup UMD bundles (versions in assets/vendor/swup/VERSIONS.txt),
+ * concatenated in load order ahead of site.js: core first, then plugins.
+ */
+const VENDOR_JS = [
+  "swup.umd.js",
+  "head-plugin.umd.js",
+  "preload-plugin.umd.js",
+  "scroll-plugin.umd.js",
+  "a11y-plugin.umd.js",
+].map((f) => path.join(__dirname, "assets", "vendor", "swup", f));
+
+/**
+ * Build the single shipped script: vendored swup + plugins, then site.js.
+ * One file keeps it to one immutable-cached request. sourceMappingURL comments
+ * are stripped because the .map files aren't shipped.
+ *
+ * @returns {string} The bundled JavaScript source.
+ */
+export function bundleScript() {
+  const parts = [...VENDOR_JS, path.join(__dirname, "assets", "site.js")].map((f) =>
+    fs.readFileSync(f, "utf8").replace(/^\/\/# sourceMappingURL=.*$/gm, "")
+  );
+  return parts.join("\n;\n");
 }
 
 /**
@@ -437,6 +470,14 @@ export function build() {
     ),
   };
 
+  // Inline the shared stylesheet and stamp the script's content hash into the
+  // head once, so every route (and the 404) gets the same chrome.
+  const siteCss = fs.readFileSync(path.join(__dirname, "assets", "site.css"), "utf8");
+  const siteJs = bundleScript();
+  const siteJsVersion = createHash("sha256").update(siteJs).digest("hex").slice(0, 10);
+  partials.head = replaceAll(partials.head, "{{siteCss}}", siteCss);
+  partials.head = replaceAll(partials.head, "{{siteJsVersion}}", siteJsVersion);
+
   // 2. Validate the manifest before stamping anything.
   validateRoutes(routes);
 
@@ -470,6 +511,10 @@ export function build() {
 
   // 7. Copy static passthrough files (assets/, media/, _headers, robots.txt).
   copyPassthrough();
+
+  // 8. Replace the copied site.js with the bundle (vendored swup + site.js),
+  //    the file the stamped ?v= hash was computed from.
+  fs.writeFileSync(path.join(DIST_DIR, "assets", "site.js"), siteJs);
 
   console.log(`built ${routes.length} routes`);
 }

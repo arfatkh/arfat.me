@@ -1,54 +1,26 @@
 /*
  * site.js — shared progressive-enhancement script for arfat.me
  *
- * Loaded with `defer` from the shared <head> partial, so it runs after the
- * document is parsed and never blocks rendering or navigation (R9.1). JS is
- * pure enhancement here: every page is a real HTML document that works fully
- * without this file.
+ * Loaded with `defer` from the shared <head> partial. Every route is a real
+ * HTML document that works fully without this file; JS only enhances it.
  *
- * The same single file is served on every route. To stay safe on pages that
- * lack a given feature's markup, each feature is an independent function that
- * guards on the presence of its target element and no-ops when absent (R9.2).
+ * Two kinds of feature:
+ *   - global (run once): router, keyboard nav, lightbox, nav scroll shadow.
+ *     They hang off document/window or the persistent nav wrapper.
+ *   - per-page (re-run after every router swap): reading progress, TOC.
+ *     Each guards on its own markup and returns a cleanup function.
  *
- * Feature bodies are filled in by tasks 11.2-11.6; this file is the scaffold.
+ * The router (swup, vendored in assets/vendor/swup and bundled ahead of this
+ * file by build.mjs) keeps the page shell alive and swaps only the nav and
+ * <main> with those of the fetched real document, so navigation feels like the
+ * old single-file site while every URL stays a crawlable page.
  */
 (function () {
   'use strict';
 
-  // 11.2 — keyboard navigation (`g` then a key → real navigation)
-  function initKeyboardNav() {
-    // `g` then a key navigates to a clean folder route (a REAL navigation),
-    // replacing the old single-page `location.hash` jumps (R9.3).
-    const nav = { h: '/', w: '/work/', a: '/about/', n: '/now/', c: '/cv/', r: '/writing/', u: '/uses/' };
+  // ── Per-page features ───────────────────────────────────────────────────
 
-    // The tooltip lives only in JS; create it on demand and guard everything on
-    // its presence so the handler stays safe even if creation ever fails.
-    const tip = Object.assign(document.createElement('div'), {
-      id: 'kb-tip',
-      innerHTML: '<b>g →</b> &nbsp;h home &nbsp;w work &nbsp;a about &nbsp;n now &nbsp;c cv &nbsp;r writing &nbsp;u uses'
-    });
-    if (document.body) document.body.appendChild(tip);
-
-    let armed = false, timer;
-    document.addEventListener('keydown', e => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' ||
-          e.target.isContentEditable || e.metaKey || e.ctrlKey || e.altKey) return;
-      if (e.key === 'g') {
-        armed = true; clearTimeout(timer);
-        if (tip) tip.classList.add('visible');
-        timer = setTimeout(() => { armed = false; if (tip) tip.classList.remove('visible'); }, 1500);
-        return;
-      }
-      if (armed) {
-        armed = false; clearTimeout(timer); if (tip) tip.classList.remove('visible');
-        const path = nav[e.key];
-        if (!path) return;
-        location.href = path;
-      }
-    });
-  }
-
-  // 11.3 — reading-progress bar, guarded on the post article
+  // Reading-progress bar, guarded on the post article.
   function initReadingProgress() {
     const el = document.querySelector('.post-article');
     if (!el) return;
@@ -64,9 +36,13 @@
 
     window.addEventListener('scroll', update, { passive: true });
     update();
+    return function () {
+      window.removeEventListener('scroll', update);
+      prog.remove();
+    };
   }
 
-  // 11.4 — table-of-contents sidebar, guarded on the TOC sidebar
+  // Table-of-contents sidebar, guarded on the TOC sidebar.
   function initToc() {
     const el = document.querySelector('.toc-sidebar');
     if (!el) return;
@@ -103,14 +79,119 @@
       });
     }, { rootMargin: '-10% 0px -80% 0px' });
     heads.forEach((h) => observer.observe(h));
+    return function () { observer.disconnect(); };
   }
 
-  // 11.5 — lightbox image zoom via delegated click (no single target element)
+  const pageFeatures = [initReadingProgress, initToc];
+  let cleanups = [];
+  function mountPage() {
+    cleanups = pageFeatures.map((f) => f()).filter(Boolean);
+  }
+  function unmountPage() {
+    cleanups.forEach((fn) => fn());
+    cleanups = [];
+  }
+
+  // ── Router (swup) ───────────────────────────────────────────────────────
+
+  // Set by initRouter when swup is available; keyboard nav uses it.
+  let go = function (href) { location.href = href; };
+
+  function initRouter() {
+    if (typeof window.Swup !== 'function') return;
+
+    // Hover/touch/focus preloading, plus the always-visible nav links so taps
+    // on touch screens are instant too.
+    const preload = new window.SwupPreloadPlugin({
+      preloadVisibleLinks: { containers: ['.site-nav'] },
+      // Re-fetching the current page on a 404 just logs a second 404.
+      preloadInitialPage: !document.getElementById('not-found')
+    });
+
+    const swup = new window.Swup({
+      // The nav carries the build-stamped aria-current, so swap it with main.
+      containers: ['.site-nav', 'main'],
+      // No View Transitions for swaps: they cost ~38ms per click in Chrome and
+      // Firefox 157 painted blank frames mid-transition. The fadeUp is a plain
+      // CSS animation on <main> instead (same as the old single-file site).
+      native: false,
+      // Don't wait for CSS animations before swapping (no fade-out phase).
+      animationSelector: false,
+      ignoreVisit: (url, { el, event } = {}) =>
+        !!(el && el.closest('[data-no-swup]')) ||
+        // e.g. TOC links that scroll themselves, lightbox clicks
+        !!(event && event.defaultPrevented) ||
+        // Only folder routes are pages; PDFs, images, etc. load normally (and
+        // the preload plugin skips them too, it asks this same function).
+        !new URL(url, location.href).pathname.endsWith('/'),
+      plugins: [
+        new window.SwupHeadPlugin(),
+        preload,
+        // Jump to the top between pages like the old site; restore on back.
+        new window.SwupScrollPlugin({
+          animateScroll: { betweenPages: false, samePageWithHash: true, samePage: true }
+        }),
+        new window.SwupA11yPlugin()
+      ]
+    });
+
+    // Workaround for @swup/preload-plugin 3.2.12: hover preloads are keyed by
+    // the link's absolute href, but a click looks them up by the relative url,
+    // so clicking during an in-flight preload fetched the page a second time.
+    // Waiting for the in-flight preload lets the click read it from swup's
+    // cache instead. Harmless once fixed upstream.
+    swup.hooks.before('page:load', (visit) => {
+      const pending = preload.preloadPromises &&
+        preload.preloadPromises.get(new URL(visit.to.url, location.href).href);
+      return pending && pending.catch(() => {});
+    });
+
+    swup.hooks.before('content:replace', unmountPage);
+    swup.hooks.on('content:replace', () => {
+      mountPage();
+      const main = document.querySelector('main');
+      main.classList.remove('swap-in');
+      void main.offsetWidth; // restart the animation
+      main.classList.add('swap-in');
+    });
+
+    go = function (href) { swup.navigate(href); };
+  }
+
+  // ── Global features ─────────────────────────────────────────────────────
+
+  // Keyboard navigation: `g` then a key.
+  function initKeyboardNav() {
+    const nav = { h: '/', w: '/work/', a: '/about/', n: '/now/', c: '/cv/', r: '/writing/', u: '/uses/' };
+
+    const tip = Object.assign(document.createElement('div'), {
+      id: 'kb-tip',
+      innerHTML: '<b>g →</b> &nbsp;h home &nbsp;w work &nbsp;a about &nbsp;n now &nbsp;c cv &nbsp;r writing &nbsp;u uses'
+    });
+    if (document.body) document.body.appendChild(tip);
+
+    let armed = false, timer;
+    document.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' ||
+          e.target.isContentEditable || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === 'g') {
+        armed = true; clearTimeout(timer);
+        if (tip) tip.classList.add('visible');
+        timer = setTimeout(() => { armed = false; if (tip) tip.classList.remove('visible'); }, 1500);
+        return;
+      }
+      if (armed) {
+        armed = false; clearTimeout(timer); if (tip) tip.classList.remove('visible');
+        const path = nav[e.key];
+        if (!path) return;
+        if (path === location.pathname) { window.scrollTo({ top: 0, behavior: 'instant' }); return; }
+        go(path);
+      }
+    });
+  }
+
+  // Lightbox image zoom via a delegated click, so it works on swapped pages.
   function initLightbox() {
-    // No single target element exists for this feature, and the matching images
-    // live on different pages, so use a DELEGATED click listener on `document`
-    // (R9.6). The handler no-ops unless the click lands on a zoomable image, so
-    // it stays safe on every route (R9.2).
     function openLb(src, alt) {
       const o = document.createElement('div');
       o.id = 'lb-overlay';
@@ -118,10 +199,10 @@
       img.src = src; img.alt = alt || '';
       o.appendChild(img);
       document.body.appendChild(o);
-      o.addEventListener('click', function () { o.remove(); });
-      document.addEventListener('keydown', function esc(e) {
-        if (e.key === 'Escape') { o.remove(); document.removeEventListener('keydown', esc); }
-      });
+      function close() { o.remove(); document.removeEventListener('keydown', esc); }
+      function esc(e) { if (e.key === 'Escape') close(); }
+      o.addEventListener('click', close);
+      document.addEventListener('keydown', esc);
     }
     document.addEventListener('click', function (e) {
       const img = e.target.closest('img.project-screenshot, .ss-grid img');
@@ -129,31 +210,23 @@
     });
   }
 
-  // 11.6 — nav scroll-shadow `.scrolled` toggle, guarded on the nav wrapper
+  // Nav scroll-shadow: `.scrolled` on the persistent nav wrapper.
   function initNavScrollShadow() {
     const el = document.querySelector('.nav-wrapper');
     if (!el) return;
-
-    // Toggle the `.scrolled` class once the page is scrolled past a small
-    // threshold; CSS `.nav-wrapper.scrolled` adds the bottom border (R9.7).
-    // Active-nav highlighting is owned by build-time `aria-current` stamping,
-    // so this handler deliberately does NOT touch it (R9.8).
     function update() {
       el.classList.toggle('scrolled', window.scrollY > 8);
     }
-
     window.addEventListener('scroll', update, { passive: true });
     update();
   }
 
-  // `defer` guarantees the DOM is parsed, but TOC build is specified to run on
-  // DOMContentLoaded (task 11.4); a listener is safe and fires regardless.
   function init() {
+    initRouter();
     initKeyboardNav();
-    initReadingProgress();
-    initToc();
     initLightbox();
     initNavScrollShadow();
+    mountPage();
   }
 
   if (document.readyState === 'loading') {

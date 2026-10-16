@@ -14,8 +14,8 @@
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Muhammad Arfat — Backend &amp; secure systems">
-<meta name="twitter:description" content="Backend engineer building APIs, infrastructure, and security tooling.">
+<meta name="twitter:title" content="{{ogTitle}}">
+<meta name="twitter:description" content="{{ogDesc}}">
 <meta name="twitter:image" content="https://arfat.me/og.png">
 
 <!-- Canonical -->
@@ -60,9 +60,14 @@
 }
 </script>
 
-<!-- Shared stylesheet (extracted from inline <style>) -->
-<link rel="stylesheet" href="/assets/site.css">
+<!-- Shared stylesheet, inlined at build time from assets/site.css. An external
+     sheet is render-blocking and revalidated on every navigation (one extra
+     round trip before paint); inlining keeps first paint dependent on the HTML
+     alone, like the old single-file site. -->
+<style>{{siteCss}}</style>
 
-<!-- Shared progressive-enhancement script -->
-<script src="/assets/site.js" defer></script>
+<!-- Shared progressive-enhancement script (incl. the router that swaps <main>
+     in place). ?v= is a content hash stamped by the build so /assets/* can be
+     cached immutably. -->
+<script src="/assets/site.js?v={{siteJsVersion}}" defer></script>
 </head>

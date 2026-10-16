@@ -1,7 +1,7 @@
 {
   "name": "arfat-me",
   "version": "1.0.0",
-  "description": "Zero-dependency static site for arfat.me — MPA build with View Transitions.",
+  "description": "Zero-dependency static site for arfat.me: multi-page build with swup in-place navigation.",
   "private": true,
   "type": "module",
   "scripts": {

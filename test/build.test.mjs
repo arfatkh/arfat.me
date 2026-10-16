@@ -210,7 +210,9 @@ test("Property P4: no route output retains a relative media/ or assets/ ref", ()
 test("Property P5: each route output has exactly one aria-current=\"page\"", () => {
   for (const route of routes) {
     const html = readDist(route.path);
-    const count = (html.match(/aria-current="page"/g) || []).length;
+    // Leading whitespace = an attribute on a tag; the inlined CSS selector
+    // `a[aria-current="page"]` is preceded by "[" and must not be counted.
+    const count = (html.match(/\saria-current="page"/g) || []).length;
     assert.equal(
       count,
       1,
@@ -293,5 +295,40 @@ test("Property P6: every route's body content is present in raw HTML, not JS-inj
       innerText.includes(snippet),
       `route ${route.path} raw <main> should contain its page content "${snippet}" (proving it is not JS-injected)`
     );
+  }
+});
+
+// The 404 is served at whatever URL was missing, so it must not claim a
+// canonical URL and must stay out of search indexes.
+test("404.html is noindex with no canonical or og:url", () => {
+  const html = fs.readFileSync(path.join(DIST_DIR, "404.html"), "utf8");
+  assert.ok(html.includes('<meta name="robots" content="noindex">'), "404 should be noindex");
+  assert.ok(!html.includes('rel="canonical"'), "404 should have no canonical");
+  assert.ok(!html.includes('property="og:url"'), "404 should have no og:url");
+});
+
+// Social cards use each page's own title/description, and the og:image the
+// head points at must actually ship.
+test("every route's twitter tags match its own title/description; og.png ships", () => {
+  for (const route of routes) {
+    const html = readDist(route.path);
+    assert.ok(html.includes(`<meta name="twitter:title" content="${route.title}">`), `${route.path} twitter:title`);
+    assert.ok(html.includes(`<meta name="twitter:description" content="${route.description}">`), `${route.path} twitter:description`);
+  }
+  assert.ok(fs.existsSync(path.join(DIST_DIR, "og.png")), "dist/og.png should exist");
+});
+
+// The shipped script is the vendored swup bundle + site.js, and every page
+// references it with ?v= equal to the first 10 hex chars of its sha256, so the
+// immutable /assets/* cache is always busted by a content change.
+test("site.js bundle ships swup + site.js and the ?v= hash matches its content", async () => {
+  const { createHash } = await import("node:crypto");
+  const js = fs.readFileSync(path.join(DIST_DIR, "assets", "site.js"));
+  const text = js.toString("utf8");
+  assert.ok(text.includes("SwupPreloadPlugin") && text.includes("site.js — shared"), "bundle should contain swup and site.js");
+  assert.ok(!/sourceMappingURL/.test(text), "bundle should not reference unshipped source maps");
+  const v = createHash("sha256").update(js).digest("hex").slice(0, 10);
+  for (const route of routes) {
+    assert.ok(readDist(route.path).includes(`/assets/site.js?v=${v}"`), `${route.path} should load site.js?v=${v}`);
   }
 });
