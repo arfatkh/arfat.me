@@ -26,6 +26,15 @@ function replaceAll(str, token, value) {
   return str.split(token).join(value);
 }
 
+/** Escape plain text for HTML text and double-quoted attribute values. */
+export function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 /** Route path is "/" or folder-style: lowercase letters, digits, hyphens, and
  *  slashes, starting and ending with "/". e.g. "/work/", "/writing/intrasec/". */
 const FOLDER_PATH_RE = /^\/[a-z0-9-/]+\/$/;
@@ -254,12 +263,16 @@ const HASH_REDIRECT_SNIPPET = `<script>
 export function renderPage(route, layout, partials, content) {
   // Fill SEO into the head partial (replace all occurrences of each slot).
   let head = partials.head;
-  head = replaceAll(head, "{{title}}", route.title);
-  head = replaceAll(head, "{{desc}}", route.description);
+  // routes.json holds plain text ("Backend & secure systems"); escape it for
+  // use inside <title> and attribute values.
+  const title = escapeHtml(route.title);
+  const desc = escapeHtml(route.description);
+  head = replaceAll(head, "{{title}}", title);
+  head = replaceAll(head, "{{desc}}", desc);
   head = replaceAll(head, "{{canonical}}", route.canonical);
   head = replaceAll(head, "{{ogUrl}}", route.canonical);
-  head = replaceAll(head, "{{ogTitle}}", route.title);
-  head = replaceAll(head, "{{ogDesc}}", route.description);
+  head = replaceAll(head, "{{ogTitle}}", title);
+  head = replaceAll(head, "{{ogDesc}}", desc);
 
   // Per-route head extras. The hash back-compat redirect snippet ships in the
   // homepage <head> ONLY (R11.1); every other route fills the slot with "" so
@@ -344,7 +357,7 @@ export function generateSitemap(routes) {
  */
 export function copyPassthrough() {
   // Recursive directory copies. media/ covers favicon.ico and cv.pdf.
-  const dirs = ["assets", "media"];
+  const dirs = ["assets", "media", ".well-known"];
   for (const dir of dirs) {
     const src = path.join(__dirname, dir);
     if (fs.existsSync(src)) {
@@ -434,6 +447,46 @@ export function bundleScript() {
 }
 
 /**
+ * CSP source tokens ('sha256-…') for every inline <script> that executes in
+ * the given HTML. Data blocks such as type="application/ld+json" never run, so
+ * they need no hash. The hash covers the exact text between the tags.
+ *
+ * @param {string} html
+ * @returns {string[]}
+ */
+export function inlineScriptHashes(html) {
+  const out = [];
+  for (const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
+    const [, attrs, body] = m;
+    if (/\bsrc\s*=/.test(attrs)) continue;
+    const type = (attrs.match(/\btype\s*=\s*"([^"]*)"/) || [])[1];
+    if (type && !/^(text|application)\/javascript$|^module$/i.test(type)) continue;
+    out.push(`'sha256-${createHash("sha256").update(body).digest("base64")}'`);
+  }
+  return out;
+}
+
+/**
+ * Fill the {{cspScriptHashes}} placeholder in dist/_headers with the unique
+ * inline-script hashes found across every emitted .html file. Throws if the
+ * placeholder is missing, so a CSP edit can't silently drop script hashes.
+ */
+export function stampCsp() {
+  const headersPath = path.join(DIST_DIR, "_headers");
+  const headers = fs.readFileSync(headersPath, "utf8");
+  if (!headers.includes("{{cspScriptHashes}}")) {
+    throw new Error("stampCsp: _headers has no {{cspScriptHashes}} placeholder in its CSP");
+  }
+  const hashes = new Set();
+  for (const file of fs.readdirSync(DIST_DIR, { recursive: true })) {
+    if (!String(file).endsWith(".html")) continue;
+    const html = fs.readFileSync(path.join(DIST_DIR, String(file)), "utf8");
+    for (const h of inlineScriptHashes(html)) hashes.add(h);
+  }
+  fs.writeFileSync(headersPath, replaceAll(headers, "{{cspScriptHashes}}", [...hashes].sort().join(" ")));
+}
+
+/**
  * Compute the dist/ output path for a route.
  * Root path "/" → dist/index.html; non-root "/x/" → dist/x/index.html.
  *
@@ -515,6 +568,10 @@ export function build() {
   // 8. Replace the copied site.js with the bundle (vendored swup + site.js),
   //    the file the stamped ?v= hash was computed from.
   fs.writeFileSync(path.join(DIST_DIR, "assets", "site.js"), siteJs);
+
+  // 9. Stamp the CSP in dist/_headers with the hashes of every inline script
+  //    the build emitted, so the policy can never drift from the pages.
+  stampCsp();
 
   console.log(`built ${routes.length} routes`);
 }

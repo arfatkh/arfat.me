@@ -8,7 +8,7 @@ import assert from "node:assert/strict";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import { build } from "../build.mjs";
+import { build, escapeHtml } from "../build.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.join(__dirname, "..");
@@ -312,8 +312,8 @@ test("404.html is noindex with no canonical or og:url", () => {
 test("every route's twitter tags match its own title/description; og.png ships", () => {
   for (const route of routes) {
     const html = readDist(route.path);
-    assert.ok(html.includes(`<meta name="twitter:title" content="${route.title}">`), `${route.path} twitter:title`);
-    assert.ok(html.includes(`<meta name="twitter:description" content="${route.description}">`), `${route.path} twitter:description`);
+    assert.ok(html.includes(`<meta name="twitter:title" content="${escapeHtml(route.title)}">`), `${route.path} twitter:title`);
+    assert.ok(html.includes(`<meta name="twitter:description" content="${escapeHtml(route.description)}">`), `${route.path} twitter:description`);
   }
   assert.ok(fs.existsSync(path.join(DIST_DIR, "og.png")), "dist/og.png should exist");
 });
@@ -331,4 +331,48 @@ test("site.js bundle ships swup + site.js and the ?v= hash matches its content",
   for (const route of routes) {
     assert.ok(readDist(route.path).includes(`/assets/site.js?v=${v}"`), `${route.path} should load site.js?v=${v}`);
   }
+});
+
+// The CSP placeholder is always replaced, and every inline script that runs
+// is covered by a hash (a missing hash = a script the browser would block).
+test("dist/_headers CSP is stamped with every inline script hash", async () => {
+  const { inlineScriptHashes } = await import("../build.mjs");
+  const headers = fs.readFileSync(path.join(DIST_DIR, "_headers"), "utf8");
+  assert.ok(!headers.includes("{{cspScriptHashes}}"), "placeholder should be replaced");
+  const csp = headers.match(/Content-Security-Policy: (.*)/)[1];
+  const pages = [...routes.map((r) => readDist(r.path)), fs.readFileSync(path.join(DIST_DIR, "404.html"), "utf8")];
+  const needed = new Set(pages.flatMap(inlineScriptHashes));
+  assert.ok(needed.size >= 1, "expected at least the homepage redirect snippet");
+  for (const h of needed) assert.ok(csp.includes(h), `CSP should allow ${h}`);
+  // Hashes only cover <script> blocks: inline handlers and javascript: URLs
+  // would be blocked by this policy, so they must never appear.
+  for (const html of pages) {
+    assert.ok(!/\son[a-z]+\s*=\s*["']/i.test(html), "no inline on*= event handlers");
+    assert.ok(!/(href|src)\s*=\s*["']\s*javascript:/i.test(html), "no javascript: URLs");
+  }
+});
+
+// security.txt (RFC 9116) must not be close to its Expires date. Fails 30
+// days early so there's time to bump Expires (max one year out) and redeploy.
+test("security.txt ships and is not within 30 days of expiring", () => {
+  const txt = fs.readFileSync(path.join(DIST_DIR, ".well-known", "security.txt"), "utf8");
+  assert.match(txt, /^Contact: mailto:/m);
+  const expires = new Date(txt.match(/^Expires: (.+)$/m)[1]);
+  const soon = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  assert.ok(expires > soon, `security.txt expires ${expires.toISOString()}: bump Expires and redeploy`);
+});
+
+// Accessibility/CLS guards: every page has the skip link and its target, and
+// every image declares its size so the layout doesn't shift while loading.
+test("every page has a skip link target and fully dimensioned images", () => {
+  for (const route of routes) {
+    const html = readDist(route.path);
+    assert.match(html, /<a\b[^>]*class="skip-link"[^>]*href="#main"|<a\b[^>]*href="#main"[^>]*class="skip-link"/, `${route.path} skip link`);
+    assert.match(html, /<main\b[^>]*\bid="main"/, `${route.path} main#main`);
+    for (const img of html.match(/<img [^>]*>/g) || []) {
+      assert.ok(/\swidth="\d+"/.test(img) && /\sheight="\d+"/.test(img), `${route.path} img without width/height: ${img.slice(0, 80)}`);
+    }
+  }
+  const home = readDist("/");
+  assert.ok(home.includes("<title>Muhammad Arfat — Backend &amp; secure systems</title>"), "& in titles is escaped");
 });

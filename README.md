@@ -18,6 +18,7 @@ navigation feels instant. Without JavaScript it is still a plain, fully working 
 | `assets/vendor/swup/` | Vendored swup bundles (versions in `VERSIONS.txt`, MIT) |
 | `media/` | Fonts, images, PDFs |
 | `og/` | Source for the `og.png` social card |
+| `.well-known/security.txt` | Security contact (RFC 9116) |
 | `build.mjs` | Zero-dependency build: stamps `src/` into `dist/` |
 | `serve.mjs` | Local static server for `dist/` (real 404s, no SPA fallback) |
 | `_headers` | Cloudflare Pages security and cache headers, copied into `dist/` |
@@ -33,7 +34,8 @@ npm run serve       # serve dist/ at http://localhost:8787
 ```
 
 Serve over HTTP rather than opening files directly, so routes like `/work/` resolve the
-way they do in production and unknown paths get the styled `404.html`.
+way they do in production, unknown paths get the styled `404.html`, and the headers from
+`_headers` (including the Content-Security-Policy) are applied like on Cloudflare.
 
 To change the social card, edit `og/og.html`, run `node og/render.mjs` (needs a local
 Chrome; set `CHROME=...` to use another binary) and commit the new `og.png`.
@@ -48,4 +50,9 @@ npm run build
 npx wrangler pages deploy dist --project-name=arfat --branch=v2
 ```
 
-`_headers` ships with the build and sets the security and cache headers.
+`_headers` ships with the build and sets the security and cache headers. The build fills
+the CSP's script hashes from the inline scripts it emits, so the policy never drifts from
+the pages.
+
+`.well-known/security.txt` expires one year after it was last updated; a test fails once
+it has expired. Bump its `Expires` date (at most a year ahead) and redeploy.

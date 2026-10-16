@@ -32,7 +32,7 @@
   {
     "id": "writing-intrasec",
     "path": "/writing/intrasec/",
-    "title": "Inside IntraSec: a client-less network vulnerability scanner — Muhammad Arfat",
+    "title": "Inside IntraSec: a client-less vulnerability scanner — Muhammad Arfat",
     "description": "How IntraSec scans an internal network for vulnerabilities without installing an agent — the architecture, the five services, and what I'd do differently.",
     "canonical": "https://arfat.me/writing/intrasec/",
     "priority": 0.7,

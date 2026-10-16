@@ -18,6 +18,8 @@
 (function () {
   'use strict';
 
+  const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   // ── Per-page features ───────────────────────────────────────────────────
 
   // Reading-progress bar, guarded on the post article.
@@ -64,7 +66,7 @@
       a.textContent = h.textContent;
       a.addEventListener('click', (e) => {
         e.preventDefault();
-        h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        h.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
       });
       nav.appendChild(a);
       links.push({ a, h });
@@ -82,7 +84,17 @@
     return function () { observer.disconnect(); };
   }
 
-  const pageFeatures = [initReadingProgress, initToc];
+  // Zoomable screenshots: reachable and operable from the keyboard.
+  const ZOOMABLE = 'img.project-screenshot, .ss-grid img';
+  function initZoomables() {
+    document.querySelectorAll(ZOOMABLE).forEach((img) => {
+      img.tabIndex = 0;
+      img.setAttribute('role', 'button');
+      img.setAttribute('aria-label', 'Enlarge image: ' + img.alt);
+    });
+  }
+
+  const pageFeatures = [initReadingProgress, initToc, initZoomables];
   let cleanups = [];
   function mountPage() {
     cleanups = pageFeatures.map((f) => f()).filter(Boolean);
@@ -100,10 +112,13 @@
   function initRouter() {
     if (typeof window.Swup !== 'function') return;
 
-    // Hover/touch/focus preloading, plus the always-visible nav links so taps
-    // on touch screens are instant too.
+    // Hover/touch/focus preloading, plus any page link that has been on screen
+    // for 500ms, so taps on touch screens (no hover) are instant too. Pages are
+    // ~10KB gzipped; skipped entirely when the browser asks to save data.
+    const saveData = !!(navigator.connection && navigator.connection.saveData);
     const preload = new window.SwupPreloadPlugin({
-      preloadVisibleLinks: { containers: ['.site-nav'] },
+      preloadHoveredLinks: !saveData,
+      preloadVisibleLinks: !saveData,
       // Re-fetching the current page on a 404 just logs a second 404.
       preloadInitialPage: !document.getElementById('not-found')
     });
@@ -190,23 +205,32 @@
     });
   }
 
-  // Lightbox image zoom via a delegated click, so it works on swapped pages.
+  // Lightbox: one native <dialog> (top layer, focus trap, Esc to close, focus
+  // returns to the image). Delegated listeners so it works on swapped pages.
   function initLightbox() {
-    function openLb(src, alt) {
-      const o = document.createElement('div');
-      o.id = 'lb-overlay';
-      const img = document.createElement('img');
-      img.src = src; img.alt = alt || '';
-      o.appendChild(img);
-      document.body.appendChild(o);
-      function close() { o.remove(); document.removeEventListener('keydown', esc); }
-      function esc(e) { if (e.key === 'Escape') close(); }
-      o.addEventListener('click', close);
-      document.addEventListener('keydown', esc);
+    const dlg = document.createElement('dialog');
+    dlg.id = 'lb';
+    dlg.setAttribute('aria-label', 'Enlarged image');
+    dlg.innerHTML = '<button type="button" class="lb-close">close</button><img alt="">';
+    document.body.appendChild(dlg);
+    const big = dlg.querySelector('img');
+    dlg.addEventListener('click', () => dlg.close()); // button, image or backdrop
+    dlg.addEventListener('close', () => big.removeAttribute('src'));
+
+    function open(img) {
+      big.src = img.currentSrc || img.src;
+      big.alt = img.alt;
+      dlg.showModal();
     }
-    document.addEventListener('click', function (e) {
-      const img = e.target.closest('img.project-screenshot, .ss-grid img');
-      if (img) { e.preventDefault(); openLb(img.src, img.alt); }
+    document.addEventListener('click', (e) => {
+      const img = e.target.closest(ZOOMABLE);
+      if (img) { e.preventDefault(); open(img); }
+    });
+    document.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches(ZOOMABLE)) {
+        e.preventDefault();
+        open(e.target);
+      }
     });
   }
 

@@ -21,7 +21,7 @@
 
   <div class="project-section">
     <p class="project-section-label">how it works</p>
-    <img src="/media/img/beruni/01-connect-aws.webp" alt="Beruni onboarding: deploy a CloudFormation read-only role to connect an AWS account" class="project-screenshot" style="aspect-ratio:2880/1636;object-fit:contain" loading="lazy">
+    <img src="/media/img/beruni/01-connect-aws.webp" width="2880" height="1636" alt="Beruni onboarding: deploy a CloudFormation read-only role to connect an AWS account" class="project-screenshot" style="aspect-ratio:2880/1636;object-fit:contain" loading="lazy">
     <p class="body-p">You deploy one CloudFormation template in your AWS account. It creates a read-only IAM role with an ExternalId, scoped to AWS's <code>SecurityAudit</code> policy: <code>List*</code>, <code>Describe*</code>, <code>Get*</code> and nothing else. No write, no modify, no delete.</p>
     <p class="body-p">Beruni's scanner calls <code>sts:AssumeRole</code> with your ExternalId. AWS hands back a short-lived session token, the scanner walks the resources it can read, and evaluates each against the rule library. Nothing is deployed inside your account beyond the role itself; the scan runs on our infrastructure. We never see access keys, only per-scan STS tokens that expire when the scan finishes. Rotating the ExternalId revokes us instantly.</p>
   </div>
@@ -29,7 +29,7 @@
   <div class="project-section">
     <p class="project-section-label">the findings table</p>
     <figure style="margin:0 0 12px">
-      <img src="/media/img/beruni/02-findings.webp" alt="Beruni findings table: each finding scored 0 to 100 with severity, resource, region, and compliance mapping" loading="lazy" class="project-screenshot" style="aspect-ratio:2880/1636;object-fit:contain">
+      <img src="/media/img/beruni/02-findings.webp" width="2880" height="1636" alt="Beruni findings table: each finding scored 0 to 100 with severity, resource, region, and compliance mapping" loading="lazy" class="project-screenshot" style="aspect-ratio:2880/1636;object-fit:contain">
       <figcaption class="ss-caption">every finding scored 0–100, sortable and filterable by any column</figcaption>
     </figure>
     <p class="body-p">Findings land in a table: severity, rule ID, resource, region, time, and a 0–100 risk score. The score is the point. It comes from a reachability and identity graph, so the findings that something can actually reach sort to the top, instead of a single account-wide grade that hides which of 200 findings matter.</p>
@@ -39,7 +39,7 @@
   <div class="project-section">
     <p class="project-section-label">reachability &amp; attack paths</p>
     <figure style="margin:0 0 12px">
-      <img src="/media/img/beruni/beruni-attack-path.webp" alt="Beruni attack-path graph linking an internet-exposed instance to the role it assumes and the sensitive bucket that role can read" loading="lazy" class="project-screenshot" style="aspect-ratio:1856/978;object-fit:contain">
+      <img src="/media/img/beruni/beruni-attack-path.webp" width="1856" height="978" alt="Beruni attack-path graph linking an internet-exposed instance to the role it assumes and the sensitive bucket that role can read" loading="lazy" class="project-screenshot" style="aspect-ratio:1856/978;object-fit:contain">
       <figcaption class="ss-caption">the toxic path: internet-exposed instance → assumable role → readable bucket</figcaption>
     </figure>
     <p class="body-p">This is the part flat scanners skip. Beruni builds a graph of what can reach what, then pins the toxic combinations on top: an internet-exposed instance, the role it can assume, the sensitive bucket that role can read. One attack path, three findings that are each unremarkable alone.</p>
@@ -50,11 +50,11 @@
     <p class="project-section-label">a single finding</p>
     <div class="ss-grid">
       <figure style="margin:0">
-        <img src="/media/img/beruni/03-finding-critical.webp" alt="A single Beruni finding with its severity, score, and the control it cites" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
+        <img src="/media/img/beruni/03-finding-critical.webp" width="2880" height="1636" alt="A single Beruni finding with its severity, score, and the control it cites" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
         <figcaption class="ss-caption">finding detail</figcaption>
       </figure>
       <figure style="margin:0">
-        <img src="/media/img/beruni/beruni-s3-001-evidence.webp" alt="The raw AWS evidence behind a Beruni finding" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
+        <img src="/media/img/beruni/beruni-s3-001-evidence.webp" width="2408" height="1980" alt="The raw AWS evidence behind a Beruni finding" loading="lazy" style="border-radius:6px;border:1px solid var(--rule);width:100%">
         <figcaption class="ss-caption">the raw evidence behind it</figcaption>
       </figure>
     </div>

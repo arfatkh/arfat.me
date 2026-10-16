@@ -13,7 +13,7 @@
 //   node serve.mjs 3000         # custom port via argv
 
 import { createServer } from "node:http";
-import { existsSync, statSync, createReadStream } from "node:fs";
+import { existsSync, statSync, createReadStream, readFileSync } from "node:fs";
 import { join, normalize, extname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -79,6 +79,34 @@ function resolveFile(urlPath) {
   return null;
 }
 
+/**
+ * Headers from dist/_headers for a URL path, mimicking Cloudflare Pages: every
+ * rule whose pattern matches applies (`*` matches anything), and values for
+ * the same header from several rules are joined with ", ". Re-read on each
+ * request so a rebuild is picked up without restarting the server.
+ */
+function headersFor(pathname) {
+  const file = join(ROOT, "_headers");
+  if (!existsSync(file)) return {};
+  const out = {};
+  let match = false;
+  for (const raw of readFileSync(file, "utf8").split("\n")) {
+    const line = raw.replace(/\s+$/, "");
+    if (!line || line.trimStart().startsWith("#")) continue;
+    if (!/^\s/.test(line)) {
+      const re = new RegExp("^" + line.trim().replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*") + "$");
+      match = re.test(pathname);
+      continue;
+    }
+    if (!match) continue;
+    const i = line.indexOf(":");
+    if (i < 0) continue;
+    const name = line.slice(0, i).trim(), value = line.slice(i + 1).trim();
+    out[name] = out[name] ? out[name] + ", " + value : value;
+  }
+  return out;
+}
+
 const server = createServer((req, res) => {
   const urlPath = req.url || "/";
 
@@ -104,7 +132,7 @@ const server = createServer((req, res) => {
   const file = resolveFile(urlPath);
 
   if (file) {
-    res.writeHead(200, { "Content-Type": contentType(file) });
+    res.writeHead(200, { ...headersFor(cleanPath), "Content-Type": contentType(file) });
     createReadStream(file).pipe(res);
     return;
   }
@@ -113,7 +141,7 @@ const server = createServer((req, res) => {
   // This deliberately does NOT fall back to index.html (no SPA soft-200).
   const notFound = join(ROOT, "404.html");
   if (existsSync(notFound)) {
-    res.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
+    res.writeHead(404, { ...headersFor(cleanPath), "Content-Type": "text/html; charset=utf-8" });
     createReadStream(notFound).pipe(res);
     return;
   }

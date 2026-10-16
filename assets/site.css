@@ -59,7 +59,9 @@ main.swap-in { animation: vtContentIn .4s ease both; }
 
 /* ── Reset ───────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
 html, body { margin: 0; padding: 0; }
 img { max-width: 100%; height: auto; display: block; }
 pre { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -670,9 +672,9 @@ main:has(.post-layout) { max-width: 1080px; }
   .home-page-item:nth-last-child(-n+2) { border-bottom: 0; }
 }
 
-/* ── Eyebrow / section label contrast ───────────────────────────────────── */
+/* ── Eyebrow / section label contrast (muted = 6.4:1 on white, WCAG AA) ─── */
 .eyebrow, .section-label, .project-section-label, .now-label {
-  color: #888;
+  color: var(--muted);
 }
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
@@ -731,7 +733,7 @@ main:has(.post-layout) { max-width: 1080px; }
 .cv-bullets { margin: 0; padding: 0 0 0 18px; list-style: disc; }
 .cv-bullets li { font-family: var(--body); font-size: 15px; line-height: 1.6; color: var(--text); margin-bottom: 3px; }
 .cv-skills-grid { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; font-family: var(--body); font-size: 15px; line-height: 1.6; }
-.cv-skill-label { font-family: var(--ui); font-size: 11px; color: #888; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; white-space: nowrap; }
+.cv-skill-label { font-family: var(--ui); font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding-top: 2px; white-space: nowrap; }
 @media print {
   .pal-bar, .nav-wrapper, .cv-dl, .site-footer { display: none !important; }
   main { padding: 0 !important; }
@@ -739,19 +741,43 @@ main:has(.post-layout) { max-width: 1080px; }
   body { font-size: 13px; }
 }
 
-/* ── Lightbox ───────────────────────────────────────────────────────────── */
-#lb-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.88);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 9999; cursor: zoom-out;
-  animation: lb-in .15s ease;
+/* ── Lightbox (native <dialog>: top layer, focus trap, Esc, focus return) ── */
+#lb {
+  width: 100vw; height: 100dvh;
+  max-width: none; max-height: none;
+  margin: 0; padding: 0; border: 0;
+  background: transparent;
+  cursor: zoom-out;
 }
-#lb-overlay img {
-  max-width: 92vw; max-height: 92vh;
+#lb[open] { display: flex; align-items: center; justify-content: center; }
+#lb::backdrop { background: rgba(0,0,0,.88); }
+#lb img {
+  max-width: 92vw; max-height: 88vh;
   object-fit: contain;
   border-radius: 4px;
   box-shadow: 0 8px 40px rgba(0,0,0,.6);
 }
+#lb .lb-close {
+  position: absolute; top: 16px; right: 16px;
+  font-family: var(--ui); font-size: 12px; letter-spacing: .04em;
+  color: #fff; background: transparent;
+  border: 1px solid rgba(255,255,255,.4); border-radius: 3px;
+  padding: 6px 10px; cursor: pointer;
+}
+#lb .lb-close:hover { border-color: #fff; }
+#lb .lb-close:focus-visible { outline-color: #fff; }
+@media (prefers-reduced-motion: no-preference) {
+  #lb[open], #lb[open]::backdrop { animation: lb-in .15s ease; }
+}
 @keyframes lb-in { from { opacity: 0; } to { opacity: 1; } }
 img.project-screenshot, .ss-grid img { cursor: zoom-in; }
+
+/* ── Skip link: hidden until focused from the keyboard ──────────────────── */
+.skip-link {
+  position: absolute; left: 16px; top: -48px; z-index: 300;
+  background: var(--text); color: var(--bg);
+  font-family: var(--ui); font-size: 12px;
+  padding: 8px 12px; border-radius: 3px;
+}
+.skip-link:focus { top: 12px; }
+main:focus { outline: none; }

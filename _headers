@@ -1,3 +1,6 @@
+# The CSP's script hash placeholder is filled in by build.mjs with the sha256 of
+# every inline <script> it emits (style-src keeps 'unsafe-inline' because the
+# pages use style="" attributes; scripts stay locked down).
 # No Cache-Control on /*: Pages already defaults to
 # "public, max-age=0, must-revalidate", and Pages joins the values of every
 # matching rule with a comma, so setting it here produced a conflicting
@@ -9,6 +12,7 @@
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   Cross-Origin-Opener-Policy: same-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' {{cspScriptHashes}}; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 
 # site.js is referenced as /assets/site.js?v=<content hash>, so a new build
 # gets a new URL.
