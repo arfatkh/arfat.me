@@ -589,6 +589,42 @@ code {
 }
 .back-link { margin-top: 32px; font-family: var(--ui); font-size: 13px; }
 
+/* ── 404: the old site's astronaut as a tilted print, the path, ways back ─ */
+.nf { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 44px; align-items: start; }
+.nf-photo { margin: 72px 0 0; }
+.nf-photo img {
+  display: block; width: 100%; height: auto;
+  padding: 8px; background: #fff; transform: rotate(2.2deg);
+  border: 1px solid var(--text); box-shadow: 5px 5px 0 var(--text);
+  filter: grayscale(1) contrast(1.05);
+  transition: filter .4s ease;
+}
+.nf-photo:hover img { filter: none; }
+.nf-photo figcaption { margin-top: 14px; font-family: var(--ui); font-size: 11.5px; line-height: 1.6; color: var(--muted); }
+.nf-photo figcaption a { color: var(--accent); border-bottom: 1px solid var(--rule); }
+.nf-path { margin-top: 2px; font-family: var(--ui); font-size: 13px; color: var(--muted); }
+.nf-path code { word-break: break-all; }
+.nf-label {
+  margin-top: 40px; font-family: var(--ui); font-size: 11px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+}
+.nf-links { margin-top: 10px; border-top: 1px solid var(--rule); }
+.nf-links li {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+  padding: 12px 0; border-bottom: 1px solid var(--rule);
+}
+.nf-links a { font-family: var(--body); font-size: 19px; font-weight: 500; color: var(--accent); }
+.nf-links li > span { font-family: var(--ui); font-size: 12px; color: var(--muted); text-align: right; }
+.nf-note { margin-top: 28px; font-family: var(--body); font-style: italic; font-size: 16px; line-height: 1.6; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) {
+  .nf-photo img { transition: none; }
+}
+@media (max-width: 720px) {
+  .nf { grid-template-columns: 1fr; gap: 0; }
+  .nf-photo { order: 2; max-width: 300px; margin: 36px auto 0; }
+  .nf-links li > span { display: none; }
+}
+
 /* ── Footer ──────────────────────────────────────────────────────────────── */
 .site-footer {
   max-width: 760px;

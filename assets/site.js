@@ -94,7 +94,15 @@
     });
   }
 
-  const pageFeatures = [initReadingProgress, initToc, initZoomables];
+  // 404: name the path that wasn't found (textContent, so nothing is parsed).
+  function initNotFound() {
+    const code = document.getElementById('nf-path');
+    if (!code) return;
+    try { code.textContent = decodeURI(location.pathname); } catch { code.textContent = location.pathname; }
+    code.parentElement.hidden = false;
+  }
+
+  const pageFeatures = [initReadingProgress, initToc, initZoomables, initNotFound];
   let cleanups = [];
   function mountPage() {
     cleanups = pageFeatures.map((f) => f()).filter(Boolean);
