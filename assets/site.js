@@ -153,12 +153,22 @@
     // Workaround for @swup/preload-plugin 3.2.12: hover preloads are keyed by
     // the link's absolute href, but a click looks them up by the relative url,
     // so clicking during an in-flight preload fetched the page a second time.
-    // Waiting for the in-flight preload lets the click read it from swup's
-    // cache instead. Harmless once fixed upstream.
-    swup.hooks.before('page:load', (visit) => {
-      const pending = preload.preloadPromises &&
-        preload.preloadPromises.get(new URL(visit.to.url, location.href).href);
-      return pending && pending.catch(() => {});
+    // This replaces page:load (it runs before the plugin's handler, which is
+    // `next`, then swup's default) and reuses the in-flight preload. It must wait
+    // inside the handler: swup skips handlers of a visit that a newer click
+    // has superseded, and a skipped page:load throws in swup. Harmless once
+    // fixed upstream (the lookup also tries the relative key).
+    swup.hooks.replace('page:load', async (visit, args, next) => {
+      const promises = preload.preloadPromises;
+      const pending = promises &&
+        (promises.get(new URL(visit.to.url, location.href).href) || promises.get(visit.to.url));
+      const page = pending ? await pending.catch(() => null) : null;
+      if (page) {
+        args.page = page;
+        args.cache = false;
+        return page;
+      }
+      return next(visit, args);
     });
 
     swup.hooks.before('content:replace', unmountPage);
