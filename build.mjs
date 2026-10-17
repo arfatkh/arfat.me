@@ -27,6 +27,24 @@ function replaceAll(str, token, value) {
   return str.split(token).join(value);
 }
 
+/**
+ * Conservative CSS minifier for the stylesheet inlined into every page: drops
+ * comments and collapses whitespace, and only removes spaces next to { } ; ,
+ * which never changes meaning. Spaces inside values (e.g. `1fr auto`,
+ * calc(a - b)) and strings like ". " are kept.
+ *
+ * @param {string} css
+ * @returns {string}
+ */
+export function minifyCss(css) {
+  return css
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/\s+/g, " ")
+    .replace(/\s*([{};,])\s*/g, "$1")
+    .replace(/;}/g, "}")
+    .trim();
+}
+
 /** Escape plain text for HTML text and double-quoted attribute values. */
 export function escapeHtml(str) {
   return String(str)
@@ -551,7 +569,7 @@ export function build() {
 
   // Inline the shared stylesheet and stamp the script's content hash into the
   // head once, so every route (and the 404) gets the same chrome.
-  const siteCss = fs.readFileSync(path.join(__dirname, "assets", "site.css"), "utf8");
+  const siteCss = minifyCss(fs.readFileSync(path.join(__dirname, "assets", "site.css"), "utf8"));
   const siteJs = bundleScript();
   const siteJsVersion = createHash("sha256").update(siteJs).digest("hex").slice(0, 10);
   partials.head = replaceAll(partials.head, "{{siteCss}}", siteCss);

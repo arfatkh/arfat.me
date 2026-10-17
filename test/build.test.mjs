@@ -399,3 +399,14 @@ test("sitemap lastmod matches each page's last git commit date", async (t) => {
     assert.equal(m && m[1], expected, `${route.path} lastmod`);
   }
 });
+
+// The stylesheet is inlined into every page, so it ships minified: no
+// comments, and well under the source size.
+test("inlined CSS is minified", () => {
+  const html = readDist("/");
+  // the site stylesheet is the largest of the inline <style> blocks
+  const css = [...html.matchAll(/<style>([\s\S]*?)<\/style>/g)].map((m) => m[1]).sort((a, b) => b.length - a.length)[0];
+  assert.ok(!css.includes("/*"), "no CSS comments in the inlined stylesheet");
+  const source = fs.readFileSync(path.join(ROOT_DIR, "assets", "site.css"), "utf8");
+  assert.ok(css.length < source.length * 0.8, `minified ${css.length} vs source ${source.length}`);
+});
